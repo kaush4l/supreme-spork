@@ -1,5 +1,7 @@
 import "server-only";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { safeNextPath } from "./next-path";
 import { supabaseServer } from "./supabase";
 
 export type Principal = {
@@ -37,6 +39,9 @@ export async function getPrincipal(): Promise<Principal | null> {
 /** For pages and actions that need a signed-in person: sends everyone else to the sign-in page. */
 export async function requirePrincipal(): Promise<Principal> {
   const principal = await getPrincipal();
-  if (!principal) redirect("/sign-in");
+  if (!principal) {
+    const back = safeNextPath((await headers()).get("x-next-path"), "");
+    redirect(back ? `/sign-in?next=${encodeURIComponent(back)}` : "/sign-in");
+  }
   return principal;
 }

@@ -1,3 +1,4 @@
+import { Link } from "@astryxdesign/core/Link";
 import { safeNextPath } from "@/server/auth/next-path";
 import { requirePrincipal } from "@/server/auth/principal";
 import { AuthForm } from "../../_components/auth-form";
@@ -18,7 +19,16 @@ export default async function MfaChallengePage({
     <AuthShell
       title="Confirm it is you"
       subtitle="Open your authenticator app and type the 6-digit code for this account."
-      footer={<SignOutForm label="Use a different account" />}
+      footer={
+        <>
+          <Link
+            href={`/mfa/recovery?next=${encodeURIComponent(safeNextPath(next))}`}
+          >
+            Lost your phone? Use a recovery code
+          </Link>
+          <SignOutForm label="Use a different account" />
+        </>
+      }
     >
       <AuthForm
         action={mfaChallenge}

@@ -19,7 +19,9 @@ describe("buildCsp", () => {
   });
 
   test("style elements are nonce-only and only attributes are open", () => {
-    expect(directive(csp, "style-src")).toBe("'self' 'nonce-abc123'");
+    expect(directive(csp, "style-src")).toBe(
+      "'self' 'nonce-abc123' 'sha256-/i2+VVt2qoVh0Ag9OWwyc9593DCZeYGAv6SliqVbheY=' 'sha256-Z5XTK23DFuEMs0PwnyZDO9SWxemQ5HxcpVaBNuUJyWY='",
+    );
     expect(directive(csp, "style-src-attr")).toBe("'unsafe-inline'");
   });
 

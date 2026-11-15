@@ -83,3 +83,13 @@ test("the page cannot be framed by another site", async ({ page, baseURL }) => {
   expect(urls.some((url) => url.startsWith("chrome-error://"))).toBe(true);
   expect(urls.some((url) => url === `${baseURL}/`)).toBe(false);
 });
+
+test("the signed-out page clears what the browser kept and then goes on to sign-in", async ({
+  request,
+}) => {
+  const response = await request.get("/signed-out");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["clear-site-data"]).toBe('"cache", "storage"');
+  expect(response.headers()["cache-control"]).toBe("no-store");
+  expect(await response.text()).toContain("url=/sign-in");
+});

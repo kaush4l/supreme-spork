@@ -7,6 +7,17 @@
  * stylesheet, which this allows); only style *attributes* are open, because Astryx writes component props as inline
  * custom properties. Checked in Chrome on 2026-11-15 (`tests/e2e/csp.spec.ts`).
  */
+/**
+ * The one `<style>` that Astryx's popover layer (pickers, menus, dialogs) adds at runtime with no nonce, allowed by its
+ * hash (as Chrome reports it) so nothing else gets in. If Astryx is upgraded and the content changes, the browser tests
+ * (`access.spec.ts`, "no CSP errors") fail with the new hash: update it here.
+ */
+const ASTRYX_LAYER_STYLE_HASHES = [
+  "'sha256-/i2+VVt2qoVh0Ag9OWwyc9593DCZeYGAv6SliqVbheY='",
+  // Added when the phone-width layout (bottom sheets, mobile navigation) showed a second fixed style.
+  "'sha256-Z5XTK23DFuEMs0PwnyZDO9SWxemQ5HxcpVaBNuUJyWY='",
+];
+
 export function buildCsp(
   nonce: string,
   options: { dev: boolean; imgSources?: string[]; frameSources?: string[] },
@@ -15,7 +26,7 @@ export function buildCsp(
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
-    `style-src 'self' 'nonce-${nonce}'${dev ? " 'unsafe-inline'" : ""}`,
+    `style-src 'self' 'nonce-${nonce}' ${ASTRYX_LAYER_STYLE_HASHES.join(" ")}${dev ? " 'unsafe-inline'" : ""}`,
     // Astryx sets component props such as maxWidth as inline custom properties (`style="--x-maxWidth:560px"`).
     // Style attributes cannot run script; `<style>` elements stay nonce-only above.
     "style-src-attr 'unsafe-inline'",

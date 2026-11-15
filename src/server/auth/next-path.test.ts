@@ -29,7 +29,7 @@ describe("safeNextPath", () => {
     expect(safeNextPath(undefined)).toBe("/");
     expect(safeNextPath(null)).toBe("/");
     expect(safeNextPath("")).toBe("/");
-    expect(safeNextPath("/" + "a".repeat(600))).toBe("/");
+    expect(safeNextPath(`/${"a".repeat(600)}`)).toBe("/");
     expect(safeNextPath("nope", "/home")).toBe("/home");
   });
 

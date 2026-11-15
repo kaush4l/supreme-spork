@@ -2,6 +2,15 @@
  * Where to go after signing in. The path comes from a query string, so it is attacker-controlled: only a plain path on
  * this site is followed (an open redirect to another site is how a phishing link borrows this app's sign-in page).
  */
+/** A control character (below a space, or DEL) or a backslash, which browsers read as a slash. */
+function hasControlOrBackslash(text: string): boolean {
+  for (const ch of text) {
+    const code = ch.charCodeAt(0);
+    if (code < 0x20 || code === 0x7f || ch === "\\") return true;
+  }
+  return false;
+}
+
 export function safeNextPath(
   raw: string | null | undefined,
   fallback = "/",
@@ -10,10 +19,10 @@ export function safeNextPath(
     return fallback;
   if (!raw.startsWith("/")) return fallback; // not a path: "https://evil.example", "javascript:...", "evil.example"
   if (raw.startsWith("//") || raw.startsWith("/\\")) return fallback; // protocol-relative: "//evil.example"
-  if (/[\u0000-\u001f\u007f\\]/.test(raw)) return fallback; // control characters and backslashes (browsers read \ as /)
+  if (hasControlOrBackslash(raw)) return fallback; // control characters and backslashes (browsers read \ as /)
   try {
     const decoded = decodeURIComponent(raw); // a proxy or framework that decodes first must see the same thing we checked
-    if (decoded.startsWith("//") || /[\u0000-\u001f\u007f\\]/.test(decoded))
+    if (decoded.startsWith("//") || hasControlOrBackslash(decoded))
       return fallback;
   } catch {
     return fallback; // malformed escape

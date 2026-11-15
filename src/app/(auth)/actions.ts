@@ -2,22 +2,42 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import type { ApiFailure } from "@/server/api/errors";
 import { routeAfterSignIn, totpFactors } from "@/server/auth/flows";
 import {
   mfaMessage,
   RESET_SENT,
+  recoveryMessage,
   resetMessage,
   signInMessage,
   signUpMessage,
 } from "@/server/auth/messages";
 import { safeNextPath } from "@/server/auth/next-path";
+import {
+  contextWordProblem,
+  fitsHashLimit,
+} from "@/server/auth/password-words";
 import { requirePrincipal } from "@/server/auth/principal";
+import {
+  makeRecoveryCodes,
+  recoveryStatus,
+  redeemRecoveryCode,
+} from "@/server/auth/recovery";
+import {
+  cleanCode,
+  looksLikeCode,
+  showCode,
+} from "@/server/auth/recovery-format";
 import { supabaseServer } from "@/server/auth/supabase";
 import { env } from "@/server/env";
 import { type FormState, publicAction } from "@/server/public-action";
 
 const email = z.email().max(254);
+/** A password being set: 12 or more characters, and no more than the 72 bytes the login service really checks. */
+const newPassword = z
+  .string()
+  .min(12)
+  .max(256)
+  .refine(fitsHashLimit, { message: "Use at most 72 characters." });
 const captcha = z.string().max(4096).optional();
 const code = z.string().regex(/^\d{6}$/);
 const next = z.string().max(512).optional();
@@ -34,6 +54,8 @@ export const signIn = publicAction(
     captchaToken: captcha,
   }),
   async (input) => {
+    if (!fitsHashLimit(input.password))
+      return { message: "That email or password is not right." };
     const supabase = await supabaseServer();
     const { error } = await supabase.auth.signInWithPassword({
       email: input.email,
@@ -50,17 +72,19 @@ export const signIn = publicAction(
 export const signUp = publicAction(
   z.strictObject({
     email,
-    password: z.string().min(12).max(256),
+    password: newPassword,
     confirm: z.string().max(256),
     captchaToken: captcha,
   }),
-  async (input) => {
+  async (input): Promise<FormState> => {
     if (input.password !== input.confirm) {
       return {
         message: "The two passwords are not the same.",
         fields: { confirm: "Not the same." },
       };
     }
+    const weak = contextWordProblem(input.password, input.email);
+    if (weak) return { message: weak, fields: { password: weak } };
     const supabase = await supabaseServer();
     const { error } = await supabase.auth.signUp({
       email: input.email,
@@ -93,17 +117,19 @@ export const forgotPassword = publicAction(
 
 export const resetPassword = publicAction(
   z.strictObject({
-    password: z.string().min(12).max(256),
+    password: newPassword,
     confirm: z.string().max(256),
   }),
-  async (input) => {
-    await requirePrincipal(); // the link in the email signed the person in for this one step
+  async (input): Promise<FormState> => {
+    const principal = await requirePrincipal(); // the link in the email signed the person in for this one step
     if (input.password !== input.confirm) {
       return {
         message: "The two passwords are not the same.",
         fields: { confirm: "Not the same." },
       };
     }
+    const weak = contextWordProblem(input.password, principal.email);
+    if (weak) return { message: weak, fields: { password: weak } };
     const supabase = await supabaseServer();
     const { error } = await supabase.auth.updateUser({
       password: input.password,
@@ -117,17 +143,19 @@ export const resetPassword = publicAction(
 export const changePassword = publicAction(
   z.strictObject({
     current: z.string().min(1).max(256),
-    password: z.string().min(12).max(256),
+    password: newPassword,
     confirm: z.string().max(256),
   }),
   async (input): Promise<FormState> => {
-    await requirePrincipal();
+    const principal = await requirePrincipal();
     if (input.password !== input.confirm) {
       return {
         message: "The two passwords are not the same.",
         fields: { confirm: "Not the same." },
       };
     }
+    const weak = contextWordProblem(input.password, principal.email);
+    if (weak) return { message: weak, fields: { password: weak } };
     const supabase = await supabaseServer();
     const { error } = await supabase.auth.updateUser({
       password: input.password,
@@ -184,6 +212,11 @@ export const mfaConfirm = publicAction(
     });
     if (error)
       return { message: mfaMessage(error), fields: { code: "Not right." } };
+    const principal = await requirePrincipal();
+    if ((await recoveryStatus(principal.accessToken)) === null)
+      return redirect(
+        `/mfa/recovery-codes?next=${encodeURIComponent(safeNextPath(input.next))}`,
+      );
     return redirect(safeNextPath(input.next));
   },
 );
@@ -205,6 +238,62 @@ export const mfaChallenge = publicAction(
     });
     if (error)
       return { message: mfaMessage(error), fields: { code: "Not right." } };
+    const principal = await requirePrincipal();
+    if ((await recoveryStatus(principal.accessToken)) === null)
+      return redirect(
+        `/mfa/recovery-codes?next=${encodeURIComponent(safeNextPath(input.next))}`,
+      );
+    return redirect(safeNextPath(input.next));
+  },
+);
+
+/** Make the person's recovery codes (or a new set, replacing the old) and show them once. Needs the second factor passed. */
+export const recoveryCreate = publicAction(
+  z.strictObject({ next }),
+  async () => {
+    const principal = await requirePrincipal();
+    const existing = await recoveryStatus(principal.accessToken);
+    const made = await makeRecoveryCodes(
+      principal.accessToken,
+      existing !== null,
+    );
+    if ("status" in made) {
+      return {
+        message:
+          made.code === "insufficient_aal"
+            ? "Confirm your authenticator code first, then make recovery codes."
+            : "We could not make recovery codes. Try again.",
+      };
+    }
+    return { ok: true, data: { codes: made.codes.map(showCode).join("\n") } };
+  },
+);
+
+/** Sign in with a recovery code when the authenticator app is lost. Each code works once. */
+export const recoveryUse = publicAction(
+  z.strictObject({ recovery: z.string().min(1).max(64), next }),
+  async (input) => {
+    const principal = await requirePrincipal();
+    if (!looksLikeCode(input.recovery))
+      return {
+        message: "That does not look like a recovery code.",
+        fields: { recovery: "Check this field." },
+      };
+    const result = await redeemRecoveryCode(
+      principal.accessToken,
+      cleanCode(input.recovery),
+    );
+    if ("status" in result)
+      return {
+        message: recoveryMessage(result),
+        fields: { recovery: "Not right." },
+      };
+    const supabase = await supabaseServer();
+    const { error } = await supabase.auth.setSession({
+      access_token: result.accessToken,
+      refresh_token: result.refreshToken,
+    });
+    if (error) return { message: recoveryMessage({}) };
     return redirect(safeNextPath(input.next));
   },
 );
@@ -214,6 +303,6 @@ export const signOut = publicAction(
   async (input) => {
     const supabase = await supabaseServer();
     await supabase.auth.signOut({ scope: input.scope ?? "local" });
-    return redirect("/sign-in");
+    return redirect("/signed-out"); // clears what the browser kept, then goes to sign-in
   },
 );

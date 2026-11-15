@@ -11,6 +11,8 @@ export async function proxy(request: NextRequest) {
   const nonce = newNonce();
   const csp = buildCsp(nonce, {
     dev: process.env.NODE_ENV === "development",
+    // Checklist photos come from the backend's signed storage links (FILES_URL: their public origin).
+    imgSources: process.env.FILES_URL ? [process.env.FILES_URL] : [],
     // The CAPTCHA widget is a frame from Cloudflare, and only when a site key is configured.
     frameSources: process.env.TURNSTILE_SITE_KEY
       ? ["https://challenges.cloudflare.com"]
@@ -19,6 +21,11 @@ export async function proxy(request: NextRequest) {
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
+  // So a page that needs a sign-in can send the person back to it afterwards (checked by safeNextPath).
+  requestHeaders.set(
+    "x-next-path",
+    request.nextUrl.pathname + request.nextUrl.search,
+  );
   requestHeaders.set("Content-Security-Policy", csp);
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });

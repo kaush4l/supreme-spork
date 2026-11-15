@@ -74,6 +74,17 @@ export function mfaMessage(failure: AuthFailure): string {
   return "We could not check that code. Try again.";
 }
 
+export function recoveryMessage(failure: {
+  code?: string | null;
+  status?: number | null;
+}): string {
+  if (failure.code === "mfa_recovery_codes_locked" || failure.status === 429)
+    return "Too many wrong codes. Wait 15 minutes, or ask the venue owner to reset your second factor.";
+  if (failure.code === "mfa_verification_failed")
+    return "That recovery code is not right, or it was already used.";
+  return "We could not check that code. Try again.";
+}
+
 /** Sent whatever the address: a person asking to reset, or signing up with an address that already has an account. */
 export const RESET_SENT =
   "If that address has an account, we have sent it a link to choose a new password.";
