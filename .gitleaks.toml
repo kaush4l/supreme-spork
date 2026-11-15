@@ -1,0 +1,15 @@
+# The only allowed "secret" is the public Supabase demo anon key in .env.example (the value every local Supabase stack
+# ships). It is allowed by exact value, so a real key in the same file is still reported.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "public Supabase demo anon key"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)\.next/''',
+  '''(^|/)test-results/''',
+]
+regexes = [
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9\.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0''',
+]

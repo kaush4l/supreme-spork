@@ -1,0 +1,36 @@
+/**
+ * The Content-Security-Policy for one response, built around a per-request nonce (Next.js docs: content-security-policy).
+ * Scripts: only this origin and the nonce, with `strict-dynamic` so the framework's own scripts load. Everything
+ * else is closed: no plugins, no framing, forms and base only to this origin.
+ *
+ * Styles: `<style>` elements and stylesheets need the nonce or this origin (Astryx loads its theme as a constructable
+ * stylesheet, which this allows); only style *attributes* are open, because Astryx writes component props as inline
+ * custom properties. Checked in Chrome on 2026-11-15 (`tests/e2e/csp.spec.ts`).
+ */
+export function buildCsp(
+  nonce: string,
+  options: { dev: boolean; imgSources?: string[] },
+): string {
+  const { dev, imgSources = [] } = options;
+  const directives = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
+    `style-src 'self' 'nonce-${nonce}'${dev ? " 'unsafe-inline'" : ""}`,
+    // Astryx sets component props such as maxWidth as inline custom properties (`style="--x-maxWidth:560px"`).
+    // Style attributes cannot run script; `<style>` elements stay nonce-only above.
+    "style-src-attr 'unsafe-inline'",
+    `img-src 'self' blob: data: ${imgSources.join(" ")}`.trim(),
+    "font-src 'self'",
+    "connect-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    ...(dev ? [] : ["upgrade-insecure-requests"]),
+  ];
+  return directives.join("; ");
+}
+
+export function newNonce(): string {
+  return btoa(crypto.randomUUID());
+}

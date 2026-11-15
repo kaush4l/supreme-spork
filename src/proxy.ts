@@ -1,0 +1,34 @@
+import { type NextRequest, NextResponse } from "next/server";
+import { refreshSession } from "@/server/auth/refresh";
+import { buildCsp, newNonce } from "@/server/csp";
+
+/**
+ * Runs before every page request (Next.js 16 `proxy`, the former middleware). It sets the Content-Security-Policy with a
+ * fresh nonce and keeps a signed-in session fresh. It is NOT where access is decided: every page, Server Action and Route Handler checks the session
+ * itself, because a matcher can skip a path and the framework has had proxy-bypass advisories.
+ */
+export async function proxy(request: NextRequest) {
+  const nonce = newNonce();
+  const csp = buildCsp(nonce, { dev: process.env.NODE_ENV === "development" });
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+
+  const response = NextResponse.next({ request: { headers: requestHeaders } });
+  response.headers.set("Content-Security-Policy", csp);
+  await refreshSession(request, response);
+  return response;
+}
+
+export const config = {
+  matcher: [
+    {
+      source: "/((?!_next/static|_next/image|favicon.ico).*)",
+      missing: [
+        { type: "header", key: "next-router-prefetch" },
+        { type: "header", key: "purpose", value: "prefetch" },
+      ],
+    },
+  ],
+};
