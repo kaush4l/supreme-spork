@@ -19,6 +19,16 @@ const PASSWORD = "Tr1cky-Spike-Horse-91x";
 
 test.skip(!LIVE, "needs the live backend stack (E2E_LIVE=1)");
 
+// A real deployment has a proxy that puts the visitor's address in `x-real-ip`; the UI passes it on so the login service
+// limits sign-in attempts per visitor. Without it every test would share one address and one limit, so each test plays
+// the proxy with an address of its own.
+test.beforeEach(async ({ context }) => {
+  const octet = () => Math.floor(Math.random() * 250) + 1;
+  await context.setExtraHTTPHeaders({
+    "x-real-ip": `10.${octet()}.${octet()}.${octet()}`,
+  });
+});
+
 const unique = () =>
   `e2e-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}@example.com`;
 
@@ -94,6 +104,7 @@ function watchPolicy(page: Page): string[] {
 
 async function signIn(page: Page, email: string, password = PASSWORD) {
   await page.goto("/sign-in");
+  await page.waitForLoadState("networkidle"); // typing before the page is hydrated would be lost
   await page.getByLabel("Email").fill(email);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
@@ -108,6 +119,7 @@ test("a new person signs up, confirms by email, sets up a venue, is made to add 
   await page.goto("/");
   await expect(page).toHaveURL(/\/sign-in/);
   await page.getByRole("link", { name: "Create an account" }).click();
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Email").fill(email);
   await page
     .getByRole("textbox", { name: "Password Required", exact: true })
@@ -161,6 +173,21 @@ test("a new person signs up, confirms by email, sets up a venue, is made to add 
   await page.getByRole("link", { name: "The E2E Kitchen" }).click();
   await expect(page.getByText("Your role here: owner")).toBeVisible();
 
+  // the owner changes who may do what, and it survives a reload
+  await page.getByRole("link", { name: "Who can do what" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Who can do what" }),
+  ).toBeVisible();
+  const pay = () =>
+    page.getByRole("switch", { name: /Manager: Change someone's pay/ });
+  await expect(pay()).toBeChecked();
+  await pay().click();
+  await expect(pay()).not.toBeChecked();
+  await page.reload();
+  await expect(pay()).not.toBeChecked();
+  await pay().click();
+  await expect(pay()).toBeChecked();
+
   await page.goto("/");
   await page.getByRole("button", { name: "Sign out of this device" }).click();
   await expect(page).toHaveURL(/\/sign-in/);
@@ -203,11 +230,13 @@ test("asking for a reset says the same thing for any address, and the link lets 
 }) => {
   const email = await confirmedUser();
   await page.goto("/forgot-password");
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Email").fill(`nobody-${Date.now()}@example.com`);
   await page.getByRole("button", { name: "Send the link" }).click();
   const unknown = await page.getByText(/we have sent/i).innerText();
 
   await page.goto("/forgot-password");
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Email").fill(email);
   await page.getByRole("button", { name: "Send the link" }).click();
   expect(await page.getByText(/we have sent/i).innerText()).toBe(unknown);
@@ -243,6 +272,7 @@ test("a sign-in link cannot send a person to another site", async ({
     "/\\evil.example.com",
   ]) {
     await page.goto(`/sign-in?next=${encodeURIComponent(hostile)}`);
+    await page.waitForLoadState("networkidle");
     await page.getByLabel("Email").fill(email);
     await page.getByLabel("Password").fill(PASSWORD);
     await page.getByRole("button", { name: "Sign in" }).click();

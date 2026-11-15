@@ -61,6 +61,9 @@ export default async function VenuePage({
               ? "You have no management rights here."
               : `Your rights: ${mine.rights.join(", ")}`}
           </Text>
+          {mine.roles.some((role) => role === "owner" || role === "partner") ? (
+            <Link href={`/venues/${venueId}/rules`}>Who can do what</Link>
+          ) : null}
         </VStack>
       </Card>
     </VStack>
