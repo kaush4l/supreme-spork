@@ -18,7 +18,9 @@ skipUnlessLive();
 test.use({ actionTimeout: 15_000 });
 // the staff login is shared, so the tests of this file run one after the other
 test.describe.configure({ mode: "serial" });
-const expectSoon = expect.configure({ timeout: 20_000 });
+// /me/offers is slow on a demo venue full of old test offers (tens of seconds), so waits after a refresh are generous
+test.setTimeout(300_000);
+const expectSoon = expect.configure({ timeout: 90_000 });
 
 /** The smallest element holding both the text and a button of this name. */
 const cardWith = (page: Page, text: string, button: string) =>
@@ -101,14 +103,10 @@ test("a colleague claims a pooled shift and the manager decides (wording and res
     const card = cardWith(mgr, shown.span, "Claim this shift");
     await card.getByRole("button", { name: "Claim this shift" }).click();
     await expectSoon(
-      mgr.getByText("Asked. Your manager will decide."),
+      mgr.getByText("Waiting for a manager").first(),
     ).toBeVisible();
     await expectSoon(
-      mgr
-        .getByText(
-          "You asked for this shift. Waiting for your manager to decide.",
-        )
-        .first(),
+      mgr.getByText("Waiting for a manager").first(),
     ).toBeVisible();
 
     // the manager gives it, and Priya no longer has it
@@ -165,7 +163,7 @@ test("a waiting request can be taken back", async ({ browser }) => {
       .getByRole("button", { name: "Claim this shift" })
       .click();
     await expectSoon(
-      mgr.getByText("Asked. Your manager will decide."),
+      mgr.getByText("Waiting for a manager").first(),
     ).toBeVisible();
     const take = cardWith(mgr, shown.span, "Take back my request");
     await take.getByRole("button", { name: "Take back my request" }).click();
@@ -204,7 +202,7 @@ test("a colleague (staff2) takes a claim back and the manager no longer sees it;
     await expectSoon(claim()).toBeVisible();
     await claim().click();
     await expectSoon(
-      t.getByText("Asked. Your manager will decide."),
+      t.getByText("Waiting for a manager").first(),
     ).toBeVisible();
 
     const cm = await browser.newContext();
@@ -216,9 +214,9 @@ test("a colleague (staff2) takes a claim back and the manager no longer sees it;
       await expectSoon(
         m.getByRole("heading", { name: "Approvals", level: 1 }),
       ).toBeVisible();
-      return m.getByText(`${shown.day}, ${shown.span}`);
+      return m.getByText(`${shown.day}, ${shown.span}`).first();
     };
-    await expectSoon(await listed()).toHaveCount(1);
+    await expectSoon(await listed()).toBeVisible();
 
     await cardWith(t, shown.span, "Take back my request")
       .getByRole("button", { name: "Take back my request" })
@@ -238,7 +236,7 @@ test("a colleague (staff2) takes a claim back and the manager no longer sees it;
     await expectSoon(claim()).toBeVisible();
     await claim().click();
     await expectSoon(
-      t.getByText("Asked. Your manager will decide."),
+      t.getByText("Waiting for a manager").first(),
     ).toBeVisible();
   } finally {
     for (const c of contexts) await c.close().catch(() => {});
@@ -278,8 +276,38 @@ test("an open shift offered by the manager uses the venue's pickup wording", asy
       await expectSoon(own).toHaveCount(ownBefore + 1);
     else
       await expectSoon(
-        mgr.getByText("Asked. Your manager will decide."),
+        mgr.getByText("Waiting for a manager").first(),
       ).toBeVisible();
+    await other.close();
+  } finally {
+    await cancelShift(shift.id);
+  }
+});
+
+test("a first-come claim says You got this shift, and still does after a reload", async ({
+  browser,
+}) => {
+  const rule = await ruleValue("pickup");
+  test.skip(rule !== "first_come", "pickup is not first come at the venue");
+  const shift = await makeShift({ position: "Manager", open: true });
+  try {
+    expect((await offerOpenShift(shift.id)).status).toBeLessThan(300);
+    const shown = await shownAs(shift.id, shift.day);
+    const other = await browser.newContext();
+    const mgr = await other.newPage();
+    const id = await signIn(mgr, "manager");
+    await openVenuePage(mgr, id, "shifts");
+    await cardWith(mgr, shown.span, "Claim this shift")
+      .getByRole("button", { name: "Claim this shift" })
+      .click();
+    const got = mgr.getByText("You got this shift").first();
+    await expectSoon(got).toBeVisible();
+    await mgr.reload();
+    await expectSoon(got).toBeVisible();
+    // settled: no claim button is left on that card
+    await expectSoon(cardWith(mgr, shown.span, "Claim this shift")).toHaveCount(
+      0,
+    );
     await other.close();
   } finally {
     await cancelShift(shift.id);

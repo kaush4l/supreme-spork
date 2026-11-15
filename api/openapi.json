@@ -356,9 +356,15 @@
             "title": "Next Due"
           },
           "retire": {
-            "default": false,
-            "title": "Retire",
-            "type": "boolean"
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retire"
           }
         },
         "title": "BillEditRequest",
@@ -6605,6 +6611,87 @@
       }
     },
     "/v1/venues/{venue_id}/bills/{bill_id}": {
+      "get": {
+        "description": "One bill: its fields, its next due dates (`occurrences`, each with its state, note and linked dockets, as in\nGET /bills) and its linked `dockets`. An id that was replaced by an edit answers with the newest version (its\n`bill_id`). Unknown, retired or another venue's bill is 404.",
+        "operationId": "bill_get_v1_venues__venue_id__bills__bill_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "bill_id",
+            "required": true,
+            "schema": {
+              "title": "Bill Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Bill Get V1 Venues  Venue Id  Bills  Bill Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Bill Get"
+      },
       "post": {
         "description": "Change a bill's name, amount, cadence or next due date (send only what changes), or retire it. The kind and\npayee cannot change. The answer carries the bill's new id; the old id still works.",
         "operationId": "bill_edit_v1_venues__venue_id__bills__bill_id__post",
@@ -9868,6 +9955,80 @@
         "summary": "Findings"
       }
     },
+    "/v1/venues/{venue_id}/findings/weeks": {
+      "get": {
+        "description": "The weeks that have current findings: `weeks` is `{week_start, count}` newest first (the Monday a week starts);\n`current_week` is the Monday of the venue's current trading week, which may have no findings yet.",
+        "operationId": "finding_weeks_v1_venues__venue_id__findings_weeks_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Finding Weeks V1 Venues  Venue Id  Findings Weeks Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Finding Weeks"
+      }
+    },
     "/v1/venues/{venue_id}/findings/{finding_id}": {
       "get": {
         "operationId": "finding_v1_venues__venue_id__findings__finding_id__get",
@@ -11389,7 +11550,7 @@
     },
     "/v1/venues/{venue_id}/me/offers": {
       "get": {
-        "description": "Shifts offered that you could work (and your own drops), with your claim if you made one.",
+        "description": "Shifts offered that you could work (and your own drops), with your claim if you made one. `my_outcome` says what came of it\n(waiting, got_it, not_this_time, offer_withdrawn). With `decided_within_days`, offers you asked for that were settled in the last N\ndays are listed too, so \"you got it\" is still there after a refresh.",
         "operationId": "my_offers_v1_venues__venue_id__me_offers_get",
         "parameters": [
           {
@@ -11399,6 +11560,24 @@
             "schema": {
               "title": "Venue Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "decided_within_days",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 365,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Decided Within Days"
             }
           },
           {
@@ -13481,7 +13660,7 @@
     },
     "/v1/venues/{venue_id}/pnl": {
       "get": {
-        "description": "Profit and loss for `from` to `to` (trading days, YYYY-MM-DD) in day, week (Monday to Sunday) or month buckets.\nEach line says its basis (accrual or cash), the date it uses and whether its source is complete; a missing source\nis a blank figure with a plain-words note, never a zero. `format=csv` returns one row per bucket and line.",
+        "description": "Profit and loss for `from` to `to` (trading days, YYYY-MM-DD) in day, week (Monday to Sunday) or month buckets.\nEach line says its basis (accrual or cash), the date it uses and whether its source is complete; a missing source\nis a blank figure with a plain-words note, never a zero. With neither `from` nor `to` the answer is for the last\nfinished trading week (Monday to Sunday) and `range_defaulted` is true; `period`, `from` and `to` always say what was\nused. One of the two alone is a 422. `format=csv` returns one row per bucket and line.",
         "operationId": "profit_and_loss_v1_venues__venue_id__pnl_get",
         "parameters": [
           {
@@ -13506,19 +13685,33 @@
           {
             "in": "query",
             "name": "from",
-            "required": true,
+            "required": false,
             "schema": {
-              "title": "From",
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
             }
           },
           {
             "in": "query",
             "name": "to",
-            "required": true,
+            "required": false,
             "schema": {
-              "title": "To",
-              "type": "string"
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
             }
           },
           {
@@ -14748,6 +14941,7 @@
     },
     "/v1/venues/{venue_id}/requests": {
       "get": {
+        "description": "Leave and swap requests. Each row has `decided_by_name`. `decided_within_days` keeps only requests decided in the last\nN days (newest decision first): the \"recently decided\" list.",
         "operationId": "requests_inbox_v1_venues__venue_id__requests_get",
         "parameters": [
           {
@@ -14799,6 +14993,24 @@
                 }
               ],
               "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "decided_within_days",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 365,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Decided Within Days"
             }
           },
           {
@@ -15084,7 +15296,7 @@
     },
     "/v1/venues/{venue_id}/roster": {
       "get": {
-        "description": "The draft week: every live shift, whether it is published, and the labour findings for the week.",
+        "description": "The draft week: every live shift, whether it is published, and the labour findings for the week. With no `week`, the\nvenue's current trading week (its Monday, in the venue's time zone); `week_start` in the answer says which.",
         "operationId": "roster_grid_v1_venues__venue_id__roster_get",
         "parameters": [
           {
@@ -15099,11 +15311,18 @@
           {
             "in": "query",
             "name": "week",
-            "required": true,
+            "required": false,
             "schema": {
-              "format": "date",
-              "title": "Week",
-              "type": "string"
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
             }
           },
           {
@@ -17296,7 +17515,7 @@
     },
     "/v1/venues/{venue_id}/roster/offers": {
       "get": {
-        "description": "Open offers with who has asked for each.",
+        "description": "Open offers with who has asked for each. With `decided_within_days`, the offers settled in the last N days instead (filled or\nwithdrawn, newest first), each with `decided_at` and `decided_by_name`: the \"recently decided\" list.",
         "operationId": "offer_board_v1_venues__venue_id__roster_offers_get",
         "parameters": [
           {
@@ -17306,6 +17525,24 @@
             "schema": {
               "title": "Venue Id",
               "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "decided_within_days",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 365,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Decided Within Days"
             }
           },
           {
@@ -23259,6 +23496,7 @@
     },
     "/v1/venues/{venue_id}/waste/{entry_id}": {
       "get": {
+        "description": "One entry, with `photo_url` (a link valid `photo_expires_in_seconds`; null when there is no photo). Staff get only\ntheir own entries.",
         "operationId": "get_waste_v1_venues__venue_id__waste__entry_id__get",
         "parameters": [
           {

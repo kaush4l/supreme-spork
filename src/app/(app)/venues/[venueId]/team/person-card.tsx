@@ -6,6 +6,7 @@ import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { HStack, VStack } from "@astryxdesign/core/Layout";
+import { Link } from "@astryxdesign/core/Link";
 import { Text } from "@astryxdesign/core/Text";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -112,6 +113,11 @@ export function PersonCard({
           {person.rateLabel ? ` · ${person.rateLabel}` : ""}
           {person.endedLabel ? ` · Last day ${person.endedLabel}` : ""}
         </Text>
+        {canEdit ? (
+          <Link href={`/venues/${venueId}/team/${person.id}`}>
+            Certificates and availability
+          </Link>
+        ) : null}
         {message ? <Banner status="error" title={message} /> : null}
         {notice ? <Banner status="info" title={notice} /> : null}
         <HStack gap={2} wrap="wrap">

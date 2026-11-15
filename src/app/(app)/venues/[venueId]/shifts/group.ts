@@ -55,3 +55,17 @@ export function offerState(offer: OfferLike): string {
     ? "First to claim gets it. It is yours as soon as you tap Claim."
     : "Tap Claim to ask for it. Your manager decides who gets it.";
 }
+
+const OUTCOME_WORDS: Record<string, string> = {
+  waiting: "Waiting for a manager",
+  got_it: "You got this shift",
+  not_this_time: "Someone else got this shift",
+  offer_withdrawn: "This offer was taken back",
+};
+
+/** The backend's `my_outcome` in plain words; null when there is no claim (or a word this screen does not know). */
+export function outcomeWords(
+  outcome: string | null | undefined,
+): string | null {
+  return outcome ? (OUTCOME_WORDS[outcome] ?? null) : null;
+}

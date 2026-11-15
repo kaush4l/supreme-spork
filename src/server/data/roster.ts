@@ -1,6 +1,5 @@
 import "server-only";
 import { z } from "zod";
-import { addDays } from "@/app/(app)/venues/[venueId]/roster/week";
 import { backend } from "../api/backend";
 import { read } from "../api/call";
 
@@ -110,15 +109,19 @@ const staffPageSchema = z
 
 const q = (venueId: string) => ({ path: { venue_id: venueId } });
 
+/** The draft week. With no week the backend answers for the venue's current trading week; `week_start` says which. */
 export function rosterGrid(
   accessToken: string,
   venueId: string,
-  week: string,
+  week: string | null,
   next: string,
 ) {
   return read(
     backend(accessToken).GET("/v1/venues/{venue_id}/roster", {
-      params: { path: q(venueId).path, query: { week } },
+      params: {
+        path: q(venueId).path,
+        query: week ? { week } : {},
+      },
     }),
     gridSchema,
     next,
@@ -164,19 +167,4 @@ export async function rosterPeople(accessToken: string, venueId: string) {
   });
   if (answer.response.status === 403) return [];
   return read(Promise.resolve(answer), staffPageSchema, "/");
-}
-
-/**
- * The Monday of the week to open when the address names none. The backend has no "this week" route; the rostered-hours
- * report answers with the last finished week when asked for no week, and the week after it is the current one.
- */
-export async function currentWeek(accessToken: string, venueId: string) {
-  const last = await read(
-    backend(accessToken).GET("/v1/venues/{venue_id}/roster-hours", {
-      params: { path: q(venueId).path, query: {} },
-    }),
-    z.object({ week_start: z.string() }),
-    `/venues/${venueId}/roster`,
-  );
-  return addDays(last.week_start, 7);
 }

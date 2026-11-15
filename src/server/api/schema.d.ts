@@ -613,7 +613,13 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /**
+     * Bill Get
+     * @description One bill: its fields, its next due dates (`occurrences`, each with its state, note and linked dockets, as in
+     *     GET /bills) and its linked `dockets`. An id that was replaced by an edit answers with the newest version (its
+     *     `bill_id`). Unknown, retired or another venue's bill is 404.
+     */
+    get: operations["bill_get_v1_venues__venue_id__bills__bill_id__get"];
     put?: never;
     /**
      * Bill Edit
@@ -1212,6 +1218,27 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/findings/weeks": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Finding Weeks
+     * @description The weeks that have current findings: `weeks` is `{week_start, count}` newest first (the Monday a week starts);
+     *     `current_week` is the Monday of the venue's current trading week, which may have no findings yet.
+     */
+    get: operations["finding_weeks_v1_venues__venue_id__findings_weeks_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/findings/{finding_id}": {
     parameters: {
       query?: never;
@@ -1492,7 +1519,9 @@ export interface paths {
     };
     /**
      * My Offers
-     * @description Shifts offered that you could work (and your own drops), with your claim if you made one.
+     * @description Shifts offered that you could work (and your own drops), with your claim if you made one. `my_outcome` says what came of it
+     *     (waiting, got_it, not_this_time, offer_withdrawn). With `decided_within_days`, offers you asked for that were settled in the last N
+     *     days are listed too, so "you got it" is still there after a refresh.
      */
     get: operations["my_offers_v1_venues__venue_id__me_offers_get"];
     put?: never;
@@ -1933,7 +1962,9 @@ export interface paths {
      * Profit And Loss
      * @description Profit and loss for `from` to `to` (trading days, YYYY-MM-DD) in day, week (Monday to Sunday) or month buckets.
      *     Each line says its basis (accrual or cash), the date it uses and whether its source is complete; a missing source
-     *     is a blank figure with a plain-words note, never a zero. `format=csv` returns one row per bucket and line.
+     *     is a blank figure with a plain-words note, never a zero. With neither `from` nor `to` the answer is for the last
+     *     finished trading week (Monday to Sunday) and `range_defaulted` is true; `period`, `from` and `to` always say what was
+     *     used. One of the two alone is a 422. `format=csv` returns one row per bucket and line.
      */
     get: operations["profit_and_loss_v1_venues__venue_id__pnl_get"];
     put?: never;
@@ -2150,7 +2181,11 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Requests Inbox */
+    /**
+     * Requests Inbox
+     * @description Leave and swap requests. Each row has `decided_by_name`. `decided_within_days` keeps only requests decided in the last
+     *     N days (newest decision first): the "recently decided" list.
+     */
     get: operations["requests_inbox_v1_venues__venue_id__requests_get"];
     put?: never;
     post?: never;
@@ -2203,7 +2238,8 @@ export interface paths {
     };
     /**
      * Roster Grid
-     * @description The draft week: every live shift, whether it is published, and the labour findings for the week.
+     * @description The draft week: every live shift, whether it is published, and the labour findings for the week. With no `week`, the
+     *     venue's current trading week (its Monday, in the venue's time zone); `week_start` in the answer says which.
      */
     get: operations["roster_grid_v1_venues__venue_id__roster_get"];
     put?: never;
@@ -2617,7 +2653,8 @@ export interface paths {
     };
     /**
      * Offer Board
-     * @description Open offers with who has asked for each.
+     * @description Open offers with who has asked for each. With `decided_within_days`, the offers settled in the last N days instead (filled or
+     *     withdrawn, newest first), each with `decided_at` and `decided_by_name`: the "recently decided" list.
      */
     get: operations["offer_board_v1_venues__venue_id__roster_offers_get"];
     put?: never;
@@ -3708,7 +3745,11 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    /** Get Waste */
+    /**
+     * Get Waste
+     * @description One entry, with `photo_url` (a link valid `photo_expires_in_seconds`; null when there is no photo). Staff get only
+     *     their own entries.
+     */
     get: operations["get_waste_v1_venues__venue_id__waste__entry_id__get"];
     put?: never;
     post?: never;
@@ -4465,11 +4506,8 @@ export interface components {
       label?: string | null;
       /** Next Due */
       next_due?: string | null;
-      /**
-       * Retire
-       * @default false
-       */
-      retire: boolean;
+      /** Retire */
+      retire?: boolean | null;
     };
     /** BillMarkRequest */
     BillMarkRequest: {
@@ -6839,6 +6877,43 @@ export interface operations {
       };
     };
   };
+  bill_get_v1_venues__venue_id__bills__bill_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        bill_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   bill_edit_v1_venues__venue_id__bills__bill_id__post: {
     parameters: {
       query?: never;
@@ -8120,6 +8195,42 @@ export interface operations {
       };
     };
   };
+  finding_weeks_v1_venues__venue_id__findings_weeks_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   finding_v1_venues__venue_id__findings__finding_id__get: {
     parameters: {
       query?: never;
@@ -8772,7 +8883,9 @@ export interface operations {
   };
   my_offers_v1_venues__venue_id__me_offers_get: {
     parameters: {
-      query?: never;
+      query?: {
+        decided_within_days?: number | null;
+      };
       header?: {
         authorization?: string | null;
         "x-api-key"?: string | null;
@@ -9653,10 +9766,10 @@ export interface operations {
   };
   profit_and_loss_v1_venues__venue_id__pnl_get: {
     parameters: {
-      query: {
+      query?: {
         period?: string;
-        from: string;
-        to: string;
+        from?: string | null;
+        to?: string | null;
         format?: string;
       };
       header?: {
@@ -10143,6 +10256,7 @@ export interface operations {
       query?: {
         status?: ("pending" | "approved" | "rejected" | "expired") | null;
         kind?: ("leave" | "swap") | null;
+        decided_within_days?: number | null;
         limit?: number;
         offset?: number;
       };
@@ -10263,8 +10377,8 @@ export interface operations {
   };
   roster_grid_v1_venues__venue_id__roster_get: {
     parameters: {
-      query: {
-        week: string;
+      query?: {
+        week?: string | null;
       };
       header?: {
         authorization?: string | null;
@@ -11200,7 +11314,9 @@ export interface operations {
   };
   offer_board_v1_venues__venue_id__roster_offers_get: {
     parameters: {
-      query?: never;
+      query?: {
+        decided_within_days?: number | null;
+      };
       header?: {
         authorization?: string | null;
         "x-api-key"?: string | null;

@@ -5,6 +5,7 @@ import {
   unique,
   watchForBrowserErrors,
 } from "../support/live";
+import { makeOwnList, PNG, pick } from "./manager-checklist-helpers";
 import { noSideScroll, pickerDate } from "./manager-helpers";
 
 skipUnlessLive();
@@ -198,6 +199,229 @@ test.describe("manager today board", () => {
     await expect(
       page.getByRole("link", { name: "Back to the Today board" }),
     ).toBeVisible({ timeout: 30_000 });
+    await noSideScroll(page);
+  });
+});
+
+// A manager works on a list of our own: a template copy, a rule for one person, one issued list.
+test.describe("manager edits a list of its own", () => {
+  test.describe.configure({ mode: "serial" });
+  test.setTimeout(240_000);
+  test.use({ actionTimeout: 30_000 });
+  let own: { name: string; listUrl: string } | null = null;
+  let savedName = "";
+
+  const cardOf = (page: Page, label: string) =>
+    page
+      .getByText(label, { exact: true })
+      .locator(
+        "xpath=ancestor::*[.//button[normalize-space()='Not applicable' or normalize-space()='Undo, this applies']][1]",
+      );
+  const changeButton = (page: Page, label: string) =>
+    page.getByRole("button", { name: `Change \u201c${label}\u201d` });
+  const takeOff = (page: Page, label: string) =>
+    changeButton(page, label)
+      .locator(
+        "xpath=ancestor::*[.//button[normalize-space()='Take off this list']][1]",
+      )
+      .getByRole("button", { name: "Take off this list" });
+  const addForm = (page: Page) => ({
+    label: page.getByLabel("What to check").last(),
+    add: page.getByRole("button", { name: "Add item" }),
+  });
+
+  test("a template copy, a rule and an issued list are made for these tests", async ({
+    page,
+  }) => {
+    await signIn(page, "manager").then(async (v) => {
+      own = await makeOwnList(page, v);
+    });
+    expect(own?.listUrl).toMatch(/\/board\/[0-9a-f-]{36}$/);
+  });
+
+  test("add an item (a double click adds one), reword it, change its kind, range and place", async ({
+    page,
+  }) => {
+    test.skip(!own, "no list of our own");
+    const errors = watchForBrowserErrors(page);
+    await signIn(page, "manager");
+    await page.goto((own as { listUrl: string }).listUrl);
+    await expect(
+      page.getByRole("heading", { name: "Add an item to this list" }),
+    ).toBeVisible();
+    await page.waitForLoadState("load");
+    const first = unique("Wipe bench");
+    await addForm(page).label.fill(first);
+    await addForm(page).add.dblclick();
+    await expect(page.getByText(first, { exact: true })).toHaveCount(1);
+    await expect(changeButton(page, first)).toBeVisible();
+
+    const second = `${first} again`;
+    await changeButton(page, first).click();
+    await page.getByLabel("What to check").first().fill(second);
+    await pick(page, /^Answer with/, "Number");
+    await page.getByLabel("Lowest allowed").first().fill("2");
+    await page.getByLabel("Highest allowed").first().fill("8");
+    await page.getByLabel(/^Place in the list/).fill("0");
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(page.getByText(second, { exact: true })).toBeVisible();
+    await expect(page.getByText(first, { exact: true })).toHaveCount(0);
+    await expect(cardOf(page, second)).toContainText("Expected: 2 to 8");
+
+    // a range that is the wrong way round is refused with the API's sentence
+    await changeButton(page, second).click();
+    await page.getByLabel("Lowest allowed").first().fill("9");
+    await page.getByRole("button", { name: "Save changes" }).click();
+    await expect(
+      page.getByText("The minimum must not be above the maximum."),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Cancel" }).click();
+    errors.expectNone();
+  });
+
+  test("mark an item not applicable with a reason and undo it, take off an added item, keep a template item", async ({
+    page,
+  }) => {
+    test.skip(!own, "no list of our own");
+    await signIn(page, "manager");
+    await page.goto((own as { listUrl: string }).listUrl);
+    await page.waitForLoadState("load");
+    const label = unique("Spare item");
+    await addForm(page).label.fill(label);
+    await addForm(page).add.click();
+    await expect(page.getByText(label, { exact: true })).toBeVisible();
+
+    await cardOf(page, label)
+      .getByRole("button", { name: "Not applicable" })
+      .click();
+    // no reason: the button stays off
+    await expect(
+      cardOf(page, label).getByRole("button", { name: "Mark not applicable" }),
+    ).toBeDisabled();
+    await page.getByLabel("Why does this not apply?").fill("Not used today");
+    await cardOf(page, label)
+      .getByRole("button", { name: "Mark not applicable" })
+      .click();
+    await expect(
+      page.getByText("Not applicable: Not used today"),
+    ).toBeVisible();
+    await cardOf(page, label)
+      .getByRole("button", { name: "Undo, this applies" })
+      .click();
+    await expect(page.getByText("Not applicable: Not used today")).toHaveCount(
+      0,
+    );
+
+    // the first item comes from the template and is never taken off
+    await page
+      .getByRole("button", { name: "Take off this list" })
+      .first()
+      .click();
+    await expect(
+      page.getByText(
+        "An item from the template is not removed from a list. Mark it not applicable instead.",
+      ),
+    ).toBeVisible();
+
+    await takeOff(page, label).click();
+    await expect(page.getByText(label, { exact: true })).toHaveCount(0);
+  });
+
+  test("attach a photo to a photo item for someone", async ({ page }) => {
+    test.skip(!own, "no list of our own");
+    // (The dev server does not allow the storage address in img-src, so the picture itself may be blocked there.)
+    await signIn(page, "manager");
+    await page.goto((own as { listUrl: string }).listUrl);
+    await page.waitForLoadState("load");
+    const label = unique("Photo of pass");
+    await addForm(page).label.fill(label);
+    await pick(page, /^Answer with/, "Photo");
+    await addForm(page).add.click();
+    await expect(page.getByText(label, { exact: true })).toBeVisible();
+    const card = cardOf(page, label);
+    await card
+      .locator('input[type="file"]')
+      .setInputFiles({ name: "pass.png", mimeType: "image/png", buffer: PNG });
+    await expect(
+      cardOf(page, label).getByText("Take or choose a new photo"),
+    ).toBeVisible({ timeout: 30_000 });
+    await expect(cardOf(page, label).getByText(/^Answered /)).toBeVisible();
+  });
+
+  test("save the list as a new template, then finish it (what is still to do is shown first)", async ({
+    page,
+  }) => {
+    test.skip(!own, "no list of our own");
+    await signIn(page, "manager");
+    await page.goto((own as { listUrl: string }).listUrl);
+    await page.waitForLoadState("load");
+    const required = unique("Must do");
+    await addForm(page).label.fill(required);
+    await page.getByLabel("Must be done to finish the list").last().check();
+    await addForm(page).add.click();
+    await expect(page.getByText(required, { exact: true })).toBeVisible();
+
+    await page
+      .getByRole("button", { name: "Finish list", exact: true })
+      .click();
+    await expect(page.getByText("Not finished yet")).toBeVisible();
+    const stillToDo = page.getByText(/^Still to do: .*Must do/);
+    await expect(stillToDo).toBeVisible();
+    const left = (await stillToDo.innerText())
+      .replace(/^Still to do: /, "")
+      .replace(/\.$/, "")
+      .split(", ");
+
+    // save as a new template: it goes to the new template, which has the added item
+    savedName = unique("Saved list");
+    await page.getByLabel("Name for the new checklist").fill(savedName);
+    await page.getByRole("button", { name: "Save as a new template" }).click();
+    await expect(
+      page.getByRole("heading", { name: savedName, level: 1 }),
+    ).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(required, { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Retire" }).click();
+    await page.getByRole("button", { name: "Yes, retire it" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Checklists", level: 1 }),
+    ).toBeVisible();
+
+    // finish: mark every required item not applicable, then finish
+    await page.goto((own as { listUrl: string }).listUrl);
+    await page.waitForLoadState("load");
+    for (const [n, label] of left.entries()) {
+      await page.reload();
+      await page.waitForLoadState("load");
+      await cardOf(page, label)
+        .getByRole("button", { name: "Not applicable" })
+        .click();
+      await page
+        .getByRole("textbox", { name: /Why does this not apply/ })
+        .fill("Not needed");
+      await page.getByRole("button", { name: "Mark not applicable" }).click();
+      await expect(page.getByText("Not applicable: Not needed")).toHaveCount(
+        n + 1,
+      );
+    }
+    await page.reload();
+    await page.waitForLoadState("load");
+    await page
+      .getByRole("button", { name: "Finish list", exact: true })
+      .dblclick();
+    await expect(page.getByText(/^Finished/)).toBeVisible();
+    await expect(page.getByText("Done", { exact: true }).first()).toBeVisible();
+  });
+
+  test("a manager list page is usable at phone width with the new forms", async ({
+    page,
+  }) => {
+    test.skip(!own, "no list of our own");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await signIn(page, "manager");
+    await page.goto((own as { listUrl: string }).listUrl);
+    await expect(
+      page.getByRole("heading", { name: "Save as a new template" }),
+    ).toBeVisible();
     await noSideScroll(page);
   });
 });

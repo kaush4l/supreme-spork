@@ -42,10 +42,15 @@ export default async function ChecklistsPage({
   ]);
   const live = templates.filter((t) => !t.retired);
   const activeRules = rules.filter((r) => r.active);
+  const positionOptions = positions
+    .filter((p) => p.active)
+    .map((p) => ({ value: p.name, label: p.name }));
+  const staffChoices = staff.map((s) => ({ value: s.id, label: s.name }));
 
   return (
     <VStack gap={4} hAlign="stretch">
       <Heading level={1}>Checklists</Heading>
+      <Link href={`${here}/issued`}>Issued lists, by date</Link>
       <Card padding={4}>
         <VStack gap={2} hAlign="stretch">
           <Heading level={2}>Your checklists</Heading>
@@ -89,6 +94,18 @@ export default async function ChecklistsPage({
                 key={r.rule_key}
                 venueId={venueId}
                 ruleKey={r.rule_key}
+                rule={{
+                  targetKind: r.target_kind,
+                  position:
+                    r.target_kind === "position" ? (r.target_value ?? "") : "",
+                  personName:
+                    r.target_kind === "person" ? (r.target_name ?? null) : null,
+                  timingKind: r.timing_kind,
+                  offset: r.offset_minutes ?? null,
+                  fixedTime: r.fixed_time ?? null,
+                }}
+                positions={positionOptions}
+                staff={staffChoices}
                 text={`${r.template_name ?? "A checklist"} for ${
                   r.target_kind === "everyone"
                     ? "everyone on a shift"
@@ -112,10 +129,8 @@ export default async function ChecklistsPage({
             value: t.template_key,
             label: t.name,
           }))}
-          positions={positions
-            .filter((p) => p.active)
-            .map((p) => ({ value: p.name, label: p.name }))}
-          staff={staff.map((s) => ({ value: s.id, label: s.name }))}
+          positions={positionOptions}
+          staff={staffChoices}
         />
       ) : null}
     </VStack>

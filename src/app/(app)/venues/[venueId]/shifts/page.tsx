@@ -8,7 +8,7 @@ import { fetchMe } from "@/server/api/me";
 import { requirePrincipal } from "@/server/auth/principal";
 import { myOffers, myUpcomingShifts } from "@/server/data/shifts";
 import { formatDay, formatHours, formatSpan } from "@/server/format";
-import { groupByDay, offerState } from "./group";
+import { groupByDay, offerState, outcomeWords } from "./group";
 import { ShiftButton } from "./shift-buttons";
 
 export const metadata = { title: "My shifts" };
@@ -33,9 +33,14 @@ export default async function ShiftsPage({
   const now = Date.now();
   // an offer for a shift that was cancelled in the meantime is no use to anyone
   const offers = allOffers.filter((o) => o.shift.status !== "cancelled");
-  const mine = offers.filter((o) => o.mine);
+  const live = offers.filter((o) => o.status === "open");
+  // offers I asked for that were settled in the last 7 days: the outcome only, no buttons
+  const settled = offers.filter(
+    (o) => o.status !== "open" && outcomeWords(o.my_outcome) !== null,
+  );
+  const mine = live.filter((o) => o.mine);
   const inPool = new Set(mine.map((o) => o.shift.external_id));
-  const couldTake = offers.filter((o) => !o.mine);
+  const couldTake = live.filter((o) => !o.mine);
   const days = groupByDay(
     shifts.filter((s) => new Date(s.end).getTime() > now),
     tz,
@@ -109,6 +114,25 @@ export default async function ShiftsPage({
         </VStack>
       ) : null}
 
+      {settled.length > 0 ? (
+        <VStack gap={2} hAlign="stretch">
+          <Heading level={2}>Shifts you asked for</Heading>
+          {settled.map((o) => (
+            <Card key={o.id} padding={4}>
+              <VStack gap={2} hAlign="stretch">
+                <Text type="body">
+                  {formatDay(o.shift.start, tz)},{" "}
+                  {formatSpan(o.shift.start, o.shift.end, tz)}
+                </Text>
+                <Text type="supporting" color="secondary">
+                  {outcomeWords(o.my_outcome)}
+                </Text>
+              </VStack>
+            </Card>
+          ))}
+        </VStack>
+      ) : null}
+
       <VStack gap={2} hAlign="stretch">
         <Heading level={2}>Shifts you could pick up</Heading>
         {couldTake.length === 0 ? (
@@ -133,7 +157,9 @@ export default async function ShiftsPage({
                     .join(" · ")}
                 </Text>
                 <Text type="supporting" color="secondary">
-                  {offerState(o)}
+                  {o.my_outcome === "waiting"
+                    ? outcomeWords(o.my_outcome)
+                    : offerState(o)}
                 </Text>
                 {o.my_claim === null ? (
                   <ShiftButton kind="claim" venueId={venueId} id={o.id} />

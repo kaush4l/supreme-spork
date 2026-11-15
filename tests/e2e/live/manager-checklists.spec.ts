@@ -6,6 +6,13 @@ import {
   skipUnlessLive,
   unique,
 } from "../support/live";
+import {
+  copyFirstTemplate,
+  DEMO_WEEK,
+  makeOwnList,
+  pick,
+  stopRule,
+} from "./manager-checklist-helpers";
 import { watchCsp } from "./manager-ops-helpers";
 
 skipUnlessLive();
@@ -34,7 +41,7 @@ async function noSideScroll(page: Page) {
 const templateLinks = (page: Page) =>
   page
     .locator('a[href*="/checklists/"]')
-    .filter({ hasNotText: "All checklists" });
+    .filter({ hasNotText: /All checklists|Issued lists/ });
 
 const starterCards = (page: Page) =>
   page.getByRole("button", { name: "Copy to my checklists" });
@@ -280,4 +287,233 @@ test("checklist setup is usable at phone width with no side scroll", async ({
     await noSideScroll(mgr.page);
   }
   await mgr.context.close();
+});
+
+test("make a copy of a checklist (a double click writes once), then retire it after being asked", async ({
+  browser,
+}) => {
+  const mgr = await as(browser, "manager");
+  const watch = watchCsp(mgr.page);
+  const name = await copyFirstTemplate(mgr.page, mgr.venue);
+  // a second copy under the same name is refused with the API's sentence
+  await mgr.page.getByLabel("Name for the copy").fill(name);
+  await mgr.page.getByRole("button", { name: "Make a copy" }).click();
+  await slow(
+    mgr.page.getByText(`You already have a template called ${name}.`),
+  ).toBeVisible();
+
+  // a double click on "Make a copy" makes one copy
+  const twice = unique("Twice copy");
+  await mgr.page.getByLabel("Name for the copy").fill(twice);
+  await mgr.page.getByRole("button", { name: "Make a copy" }).dblclick();
+  await slow(
+    mgr.page.getByRole("heading", { name: twice, level: 1 }),
+  ).toBeVisible();
+  await openVenuePage(mgr.page, mgr.venue, "checklists");
+  await slow(
+    mgr.page.getByRole("link", { name: new RegExp(`^${twice}`) }),
+  ).toHaveCount(1);
+
+  // retire asks first, and says what it does to lists already issued
+  await mgr.page.getByRole("link", { name: new RegExp(`^${twice}`) }).click();
+  await mgr.page.waitForLoadState("load");
+  await mgr.page.getByRole("button", { name: "Retire" }).click();
+  await slow(mgr.page.getByText("Retire this checklist?")).toBeVisible();
+  await slow(
+    mgr.page.getByText(/Lists already issued from it stay as they are/),
+  ).toBeVisible();
+  await mgr.page.getByRole("button", { name: "No, keep it" }).click();
+  await slow(mgr.page.getByText("Retire this checklist?")).toHaveCount(0);
+  await mgr.page.getByRole("button", { name: "Retire" }).click();
+  await mgr.page.getByRole("button", { name: "Yes, retire it" }).click();
+  await slow(
+    mgr.page.getByRole("heading", { name: "Checklists", level: 1 }),
+  ).toBeVisible();
+  await slow(
+    mgr.page.getByRole("link", { name: new RegExp(`^${twice}`) }),
+  ).toHaveCount(0);
+
+  // clean up the first copy too
+  await mgr.page.getByRole("link", { name: new RegExp(`^${name}`) }).click();
+  await mgr.page.waitForLoadState("load");
+  await mgr.page.getByRole("button", { name: "Retire" }).click();
+  await mgr.page.getByRole("button", { name: "Yes, retire it" }).click();
+  await slow(
+    mgr.page.getByRole("link", { name: new RegExp(`^${name}`) }),
+  ).toHaveCount(0);
+  watch.expectNone();
+  await mgr.context.close();
+});
+
+test("edit a rule: who it goes to and when", async ({ browser }) => {
+  const mgr = await as(browser, "manager");
+  const name = await copyFirstTemplate(mgr.page, mgr.venue);
+  await openVenuePage(mgr.page, mgr.venue, "checklists");
+  await pick(mgr.page, /^Checklist/, name);
+  await mgr.page.getByRole("button", { name: "Add rule" }).click();
+  const said = (rest: RegExp) =>
+    mgr.page.getByText(new RegExp(`^${name} for .*${rest.source}`));
+  const change = () =>
+    mgr.page.getByRole("button", { name: "Change this rule" }).last();
+  await slow(
+    said(/everyone on a shift, due when the shift starts/),
+  ).toBeVisible();
+
+  await change().click();
+  await mgr.page
+    .getByRole("combobox", { name: /^Due/ })
+    .or(mgr.page.getByRole("button", { name: /^Due/ }))
+    .first()
+    .click();
+  await mgr.page.getByRole("option", { name: "At a set time" }).click();
+  await mgr.page
+    .getByLabel(/Time \(venue time\)/)
+    .last()
+    .fill("17:30");
+  await mgr.page.getByRole("button", { name: "Save rule" }).click();
+  await slow(mgr.page.getByRole("button", { name: "Save rule" })).toHaveCount(
+    0,
+  );
+  await slow(said(/due at a set time \(17:30\)/)).toBeVisible();
+
+  // a bad time is refused with the API's sentence and the rule is unchanged
+  await change().click();
+  await mgr.page
+    .getByLabel(/Time \(venue time\)/)
+    .last()
+    .fill("late");
+  await mgr.page.getByRole("button", { name: "Save rule" }).click();
+  await slow(mgr.page.getByText("Use a time like 21:30.")).toBeVisible();
+  await mgr.page.getByRole("button", { name: "Cancel" }).click();
+
+  // change who it goes to: one position
+  await change().click();
+  await mgr.page
+    .getByRole("combobox", { name: /^Given to/ })
+    .or(mgr.page.getByRole("button", { name: /^Given to/ }))
+    .first()
+    .click();
+  await mgr.page.getByRole("option", { name: "One position" }).click();
+  await mgr.page
+    .getByRole("combobox", { name: /^Position/ })
+    .or(mgr.page.getByRole("button", { name: /^Position/ }))
+    .first()
+    .click();
+  await mgr.page.getByRole("option").first().click();
+  await mgr.page.getByRole("button", { name: "Save rule" }).click();
+  await slow(mgr.page.getByRole("button", { name: "Save rule" })).toHaveCount(
+    0,
+  );
+  await slow(said(/shifts, due at a set time \(17:30\)/)).toBeVisible();
+
+  await stopRule(mgr.page, mgr.venue, name);
+  await mgr.page.goto(`/venues/${mgr.venue}/checklists`);
+  await mgr.page.getByRole("link", { name: new RegExp(`^${name}`) }).click();
+  await mgr.page.waitForLoadState("load");
+  await mgr.page.getByRole("button", { name: "Retire" }).click();
+  await mgr.page.getByRole("button", { name: "Yes, retire it" }).click();
+  await slow(
+    mgr.page.getByRole("link", { name: new RegExp(`^${name}`) }),
+  ).toHaveCount(0);
+  await mgr.context.close();
+});
+
+test("issued lists by date: issue now, repeat adds nothing, my list is there and links to its page", async ({
+  browser,
+}) => {
+  const mgr = await as(browser, "manager");
+  const watch = watchCsp(mgr.page);
+  await openVenuePage(mgr.page, mgr.venue, "checklists");
+  await mgr.page.getByRole("link", { name: "Issued lists, by date" }).click();
+  await slow(
+    mgr.page.getByRole("heading", { name: "Issued lists", level: 1 }),
+  ).toBeVisible();
+  await slow(mgr.page.getByText(/\d+ lists? in all/)).toBeVisible();
+
+  const { name, listUrl } = await makeOwnList(mgr.page, mgr.venue);
+  expect(listUrl).toMatch(/\/board\/[0-9a-f-]{36}$/);
+
+  // issuing again makes nothing new, and a double click answers once
+  await mgr.page.goto(`/venues/${mgr.venue}/checklists/issued`);
+  await mgr.page.waitForLoadState("load");
+  await mgr.page.getByLabel("Week starting (a Monday)").fill(DEMO_WEEK);
+  await mgr.page.getByRole("button", { name: "Issue lists now" }).dblclick();
+  await slow(
+    mgr.page.getByText(/^Made 0 new lists for the week starting 2026-11-09/),
+  ).toBeVisible();
+  await slow(mgr.page.getByText(/^Made /)).toHaveCount(1);
+
+  // the date range form narrows the list; an empty range says so
+  await mgr.page.getByLabel("From", { exact: true }).fill(DEMO_WEEK);
+  await mgr.page.getByLabel("To", { exact: true }).fill("2026-11-15");
+  await mgr.page.getByRole("button", { name: "Show" }).click();
+  await expect(mgr.page).toHaveURL(/issued\?from=2026-11-09&to=2026-11-15/);
+  await slow(
+    mgr.page.getByText(/\d+ lists? from 2026-11-09 to 2026-11-15/),
+  ).toBeVisible();
+  await slow(
+    mgr.page.getByRole("link", { name: new RegExp(`^${name}, `) }),
+  ).toHaveCount(1);
+  await slow(
+    mgr.page.getByText(/^Due \d{1,2}:\d{2} [ap]m$/).first(),
+  ).toBeVisible();
+  await mgr.page.getByLabel("From", { exact: true }).fill("2030-01-01");
+  await mgr.page.getByLabel("To", { exact: true }).fill("2030-01-07");
+  await mgr.page.getByRole("button", { name: "Show" }).click();
+  await slow(
+    mgr.page.getByText(
+      "No lists were issued between 2030-01-01 and 2030-01-07.",
+    ),
+  ).toBeVisible();
+  await mgr.page.getByLabel("From", { exact: true }).fill("2030-02-01");
+  await mgr.page.getByLabel("To", { exact: true }).fill("2030-01-07");
+  await mgr.page.getByRole("button", { name: "Show" }).click();
+  await slow(
+    mgr.page.getByText("The end date is before the start date."),
+  ).toBeVisible();
+
+  // a day that is not a Monday is refused with the API's sentence
+  await mgr.page.getByLabel("Week starting (a Monday)").fill("2026-11-10");
+  await mgr.page.getByRole("button", { name: "Issue lists now" }).click();
+  await slow(
+    mgr.page.getByText("A roster week starts on a Monday."),
+  ).toBeVisible();
+  watch.expectNone();
+  await mgr.context.close();
+});
+
+test("issued lists: empty on the owner's second venue, hidden from staff, fine at phone width", async ({
+  browser,
+}) => {
+  const owner = await as(browser, "owner");
+  await owner.page.goto("/");
+  const href = await owner.page
+    .locator('a[href^="/venues/"]')
+    .filter({ hasText: "Bondi" })
+    .first()
+    .getAttribute("href");
+  const bondi = href?.match(/\/venues\/([0-9a-f-]{36})/)?.[1];
+  expect(bondi, "the Bondi venue link").toBeTruthy();
+  await owner.page.goto(`/venues/${bondi}/checklists/issued`);
+  await slow(
+    owner.page.getByRole("heading", { name: "Issued lists", level: 1 }),
+  ).toBeVisible();
+  await slow(owner.page.getByText("No lists were issued yet.")).toBeVisible();
+  await owner.context.close();
+
+  const mgr = await as(browser, "manager");
+  await mgr.page.setViewportSize({ width: 390, height: 844 });
+  await mgr.page.goto(
+    `/venues/${mgr.venue}/checklists/issued?from=${DEMO_WEEK}&to=2026-11-15`,
+  );
+  await slow(
+    mgr.page.getByRole("heading", { name: "Issued lists", level: 1 }),
+  ).toBeVisible();
+  await noSideScroll(mgr.page);
+  await mgr.context.close();
+
+  const staff = await as(browser, "staff");
+  await staff.page.goto(`/venues/${staff.venue}/checklists/issued`);
+  await slow(staff.page.getByText(NOT_FOUND).first()).toBeVisible();
+  await staff.context.close();
 });

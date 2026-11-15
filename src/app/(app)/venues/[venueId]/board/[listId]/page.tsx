@@ -10,9 +10,11 @@ import { fetchMe } from "@/server/api/me";
 import { requirePrincipal } from "@/server/auth/principal";
 import { managerListDetail } from "@/server/data/board";
 import { formatDay, formatTime } from "@/server/format";
-import { ItemCard } from "../../lists/[listId]/item-card";
 import { progressWords, statusWord } from "../../lists/words";
-import { answerForSomeone } from "./actions";
+import { answerForSomeone, markListItemNotApplicable } from "./actions";
+import { AddListItem, ItemEdit } from "./item-edit";
+import { FinishList, SaveAsTemplate } from "./list-actions";
+import { ManagerItemCard } from "./manager-item-card";
 
 export const metadata = { title: "Checklist" };
 
@@ -72,21 +74,29 @@ export default async function BoardListPage({
         </Text>
       ) : (
         list.items.map((item) => (
-          <ItemCard
-            key={item.item_key}
-            venueId={venueId}
-            listId={listId}
-            item={item}
-            canEdit
-            answeredLabel={
-              item.answer?.answered_at
-                ? `Answered ${when(item.answer.answered_at)}${item.answer.answered_by === principal.userId ? " by you" : item.answer.answered_by_name ? ` by ${item.answer.answered_by_name}` : ""}`
-                : null
-            }
-            answer={answerForSomeone}
-          />
+          <VStack key={item.item_key} gap={1} hAlign="stretch">
+            <ManagerItemCard
+              venueId={venueId}
+              listId={listId}
+              item={item}
+              canEdit
+              notApplicable={markListItemNotApplicable}
+              answeredLabel={
+                item.answer?.answered_at
+                  ? `Answered ${when(item.answer.answered_at)}${item.answer.answered_by === principal.userId ? " by you" : item.answer.answered_by_name ? ` by ${item.answer.answered_by_name}` : ""}`
+                  : null
+              }
+              answer={answerForSomeone}
+            />
+            <ItemEdit venueId={venueId} listId={listId} item={item} />
+          </VStack>
         ))
       )}
+      <AddListItem venueId={venueId} listId={listId} />
+      {list.status === "done" ? null : (
+        <FinishList venueId={venueId} listId={listId} />
+      )}
+      <SaveAsTemplate venueId={venueId} listId={listId} />
     </VStack>
   );
 }

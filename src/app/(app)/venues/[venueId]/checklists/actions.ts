@@ -159,3 +159,80 @@ export const deactivateRule = action(
     return { done: true };
   },
 );
+
+const templateSchema = z.object({ template_key: z.string() });
+
+/** Make a copy of a checklist (with its items). Without a name the backend calls it "<name> copy". */
+export const duplicateTemplate = action(
+  strictInput({
+    venueId: z.uuid(),
+    templateKey: z.string().min(1),
+    key: z.string(),
+    name: z.string().trim().max(120).optional(),
+  }),
+  async ({ venueId, templateKey, key, name }, principal) => {
+    const { data, error, response } = await backend(principal.accessToken).POST(
+      "/v1/venues/{venue_id}/workflows/templates/{template_key}/duplicate",
+      {
+        params: { path: { venue_id: venueId, template_key: templateKey } },
+        body: name ? { name } : {},
+        headers: idempotencyHeader(key),
+      },
+    );
+    if (error !== undefined || !response.ok)
+      throw toApiFailure(response.status, error);
+    revalidatePath(base(venueId));
+    return { templateKey: templateSchema.parse(data).template_key };
+  },
+);
+
+/** Retire a checklist: no new lists are made from it and it can no longer be changed. */
+export const retireTemplate = action(
+  strictInput({ venueId: z.uuid(), templateKey: z.string().min(1) }),
+  async ({ venueId, templateKey }, principal) => {
+    const { error, response } = await backend(principal.accessToken).POST(
+      "/v1/venues/{venue_id}/workflows/templates/{template_key}/retire",
+      { params: { path: { venue_id: venueId, template_key: templateKey } } },
+    );
+    if (error !== undefined || !response.ok)
+      throw toApiFailure(response.status, error);
+    revalidatePath(base(venueId));
+    revalidatePath(`${base(venueId)}/${templateKey}`);
+    return { done: true };
+  },
+);
+
+/** Change who a rule goes to and when. Send only the parts the person set. */
+export const changeRule = action(
+  strictInput({
+    venueId: z.uuid(),
+    ruleKey: z.string().min(1),
+    targetKind: z.enum(["everyone", "position", "person"]),
+    position: z.string().optional(),
+    staffId: z.string().optional(),
+    timingKind: z.enum(["shift_start", "before_shift_end", "fixed_time"]),
+    offsetMinutes: z.number().int().min(0).max(1440).optional(),
+    fixedTime: z.string().optional(),
+  }),
+  async (i, principal) => {
+    const { error, response } = await backend(principal.accessToken).POST(
+      "/v1/venues/{venue_id}/workflows/rules/{rule_key}",
+      {
+        params: { path: { venue_id: i.venueId, rule_key: i.ruleKey } },
+        body: {
+          target_kind: i.targetKind,
+          position: i.targetKind === "position" ? i.position : undefined,
+          staff_id: i.targetKind === "person" ? i.staffId : undefined,
+          timing_kind: i.timingKind,
+          offset_minutes:
+            i.timingKind === "before_shift_end" ? i.offsetMinutes : undefined,
+          fixed_time: i.timingKind === "fixed_time" ? i.fixedTime : undefined,
+        },
+      },
+    );
+    if (error !== undefined || !response.ok)
+      throw toApiFailure(response.status, error);
+    revalidatePath(base(i.venueId));
+    return { done: true };
+  },
+);

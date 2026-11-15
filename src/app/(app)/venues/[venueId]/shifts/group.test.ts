@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { groupByDay, offerState } from "./group";
+import { groupByDay, offerState, outcomeWords } from "./group";
 
 const tz = "Australia/Sydney";
 
@@ -33,4 +33,12 @@ test("claim states in plain words", () => {
   expect(offerState({ ...base, mine: true })).toContain(
     "You put this shift up",
   );
+});
+
+test("claim outcomes in plain words", () => {
+  expect(outcomeWords("got_it")).toBe("You got this shift");
+  expect(outcomeWords("not_this_time")).toBe("Someone else got this shift");
+  expect(outcomeWords("offer_withdrawn")).toBe("This offer was taken back");
+  expect(outcomeWords("waiting")).toBe("Waiting for a manager");
+  expect(outcomeWords(null)).toBeNull();
 });

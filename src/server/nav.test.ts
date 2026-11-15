@@ -34,7 +34,11 @@ describe("navigation by role and rights", () => {
       "requests",
       "pay",
       "notices",
+      "waste",
+      "docket-send",
     ]);
+    expect(mayOpen(staff, "dockets")).toBe(false);
+    expect(mayOpen(staff, "week")).toBe(false);
     expect(mayOpen(staff, "board")).toBe(false);
     expect(mayOpen(staff, "roster")).toBe(false);
   });
@@ -55,7 +59,46 @@ describe("navigation by role and rights", () => {
   });
   test("a bookkeeper has no shift pages", () => {
     expect(mayOpen(bookkeeper, "today")).toBe(false);
-    expect(keys(bookkeeper)).toEqual([]);
+    expect(keys(bookkeeper)).toEqual([
+      "week",
+      "messages",
+      "dockets",
+      "suppliers",
+      "sales-files",
+      "recipes",
+      "waste",
+    ]);
+  });
+  test("the money pages follow the rights the backend sends", () => {
+    const b = {
+      roles: ["bookkeeper"],
+      rights: ["money.pnl.view", "money.cash", "money.exports"],
+    };
+    expect(keys(b)).toEqual([
+      "week",
+      "messages",
+      "dockets",
+      "suppliers",
+      "sales-files",
+      "recipes",
+      "waste",
+      "pnl",
+      "bills",
+      "bank",
+      "downloads",
+    ]);
+    expect(mayOpen(manager, "pnl")).toBe(false);
+    expect(mayOpen(manager, "dockets")).toBe(true);
+    expect(mayOpen({ ...manager, rights: ["expiry.manage"] }, "expiry")).toBe(
+      true,
+    );
+  });
+  test("waste is listed once: with a person's own work, or with the stock pages", () => {
+    const onTeam = { ...manager, has_staff_profile: true };
+    const offTeam = { ...owner, has_staff_profile: false };
+    expect(keys(onTeam).filter((k) => k === "waste")).toHaveLength(1);
+    expect(keys(offTeam).filter((k) => k === "waste")).toHaveLength(1);
+    expect(mayOpen(onTeam, "docket-send")).toBe(false);
   });
   test("an owner who is not on the team has no shift pages, one who is does", () => {
     expect(mayOpen({ ...owner, has_staff_profile: false }, "today")).toBe(
@@ -71,6 +114,6 @@ describe("navigation by role and rights", () => {
   test("the landing page is the first one in the navigation", () => {
     expect(landingPath(staff)).toBe("/today");
     expect(landingPath(manager)).toBe("/board");
-    expect(landingPath(bookkeeper)).toBe("");
+    expect(landingPath(bookkeeper)).toBe("/week");
   });
 });

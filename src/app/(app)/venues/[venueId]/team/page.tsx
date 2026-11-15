@@ -1,6 +1,7 @@
 import { Banner } from "@astryxdesign/core/Banner";
 import { Card } from "@astryxdesign/core/Card";
-import { VStack } from "@astryxdesign/core/Layout";
+import { HStack, VStack } from "@astryxdesign/core/Layout";
+import { Link } from "@astryxdesign/core/Link";
 import { Heading, Text } from "@astryxdesign/core/Text";
 import { notFound } from "next/navigation";
 import { z } from "zod";
@@ -87,6 +88,23 @@ export default async function TeamPage({
         title="Everyone needs an email and a phone to sign in"
         description="When you invite someone, we send the invite to their email. They accept it after they sign in."
       />
+      {manage || can(rights, "roster.build") ? (
+        <HStack gap={3} wrap="wrap">
+          {manage ? (
+            <Link href={`/venues/${venueId}/team/unlinked`}>
+              People not on the team
+            </Link>
+          ) : null}
+          {can(rights, "roster.build") ? (
+            <>
+              <Link href={`/venues/${venueId}/team/groups`}>Staff groups</Link>
+              <Link href={`/venues/${venueId}/team/blackouts`}>
+                Leave blackout dates
+              </Link>
+            </>
+          ) : null}
+        </HStack>
+      ) : null}
       {manage ? (
         <>
           <Heading level={2}>Working here</Heading>

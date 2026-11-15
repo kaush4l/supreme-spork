@@ -113,3 +113,53 @@ export function listPositions(token: string, venueId: string, next: string) {
     next,
   );
 }
+
+export const issuedListSchema = z.object({
+  id: z.string(),
+  template_key: z.string(),
+  name: z.string(),
+  staff_ref: z.string().nullish(),
+  trading_day: z.string(),
+  due_at: z.string(),
+  issued_at: z.string().nullish(),
+});
+export type IssuedList = z.infer<typeof issuedListSchema>;
+
+/**
+ * Issued lists by trading day (managers). Without `from` and `to` the backend sends every list, oldest due first.
+ * The backend sends no status or progress here, only who and when.
+ */
+export function issuedLists(
+  token: string,
+  venueId: string,
+  range: { from: string; to: string } | null,
+  next: string,
+) {
+  return read(
+    backend(token).GET("/v1/venues/{venue_id}/workflows/lists", {
+      params: {
+        ...path(venueId),
+        query: range ? { ...range, limit: 200 } : { limit: 200 },
+      },
+    }),
+    z.object({ items: z.array(issuedListSchema), total: z.number() }),
+    next,
+  );
+}
+
+/** People's names by staff reference (the issued list sends only the reference). */
+export function staffNames(token: string, venueId: string, next: string) {
+  return read(
+    backend(token).GET("/v1/venues/{venue_id}/staff", {
+      params: { ...path(venueId), query: { limit: 200 } },
+    }),
+    z
+      .object({
+        items: z.array(z.object({ staff_ref: z.string(), name: z.string() })),
+      })
+      .transform(
+        (p) => new Map(p.items.map((s) => [s.staff_ref, s.name] as const)),
+      ),
+    next,
+  );
+}

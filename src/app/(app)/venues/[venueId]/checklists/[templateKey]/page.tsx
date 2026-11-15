@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requirePrincipal } from "@/server/auth/principal";
 import { getTemplate } from "@/server/data/checklists";
 import { ItemEditor, NewItem } from "./items";
+import { TemplateActions } from "./template-actions";
 
 export const metadata = { title: "Checklist" };
 
@@ -55,7 +56,16 @@ export default async function TemplatePage({
           }}
         />
       ))}
-      <NewItem venueId={venueId} templateKey={templateKey} />
+      {template.retired ? (
+        <Text type="supporting" color="secondary">
+          This checklist is retired. Lists already issued from it are unchanged.
+        </Text>
+      ) : (
+        <>
+          <NewItem venueId={venueId} templateKey={templateKey} />
+          <TemplateActions venueId={venueId} templateKey={templateKey} />
+        </>
+      )}
     </VStack>
   );
 }

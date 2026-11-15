@@ -10,7 +10,6 @@ import { fetchMe } from "@/server/api/me";
 import { requirePrincipal } from "@/server/auth/principal";
 import { myRights } from "@/server/data/me";
 import {
-  currentWeek,
   type RosterGrid,
   rosterGrid,
   rosterPeople,
@@ -69,15 +68,15 @@ export default async function RosterPage({
   const token = principal.accessToken;
   const here = `/venues/${venueId}/roster`;
   const asked = parseWeek((await searchParams).week);
-  const [me, rights, week] = await Promise.all([
+  const [me, rights, grid] = await Promise.all([
     fetchMe(backend(token)),
     myRights(token, venueId, here),
-    asked ?? currentWeek(token, venueId),
+    rosterGrid(token, venueId, asked, here),
   ]);
+  const week = grid.week_start;
   const tz =
     me.venues.find((v) => v.id === venueId)?.timezone ?? "Australia/Sydney";
-  const [grid, published, positions, people] = await Promise.all([
-    rosterGrid(token, venueId, week, here),
+  const [published, positions, people] = await Promise.all([
     rosterPublished(token, venueId, week, here),
     rosterPositions(token, venueId, here),
     rosterPeople(token, venueId),

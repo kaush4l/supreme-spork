@@ -66,12 +66,31 @@ const ROUTES: Route[] = [
   { key: "settings", heading: "Settings", label: "Settings" },
   { key: "rules", heading: "Who can do what", label: "Who can do what" },
   { key: "changes", heading: "Change requests", label: "Change requests" },
+  { key: "roster-files", heading: "Roster files", label: "Roster files" },
+  { key: "week", heading: "This week", label: "This week" },
+  { key: "messages", heading: "Monday messages", label: "Monday messages" },
+  { key: "dockets", heading: "Dockets", label: "Dockets" },
+  { key: "dockets/send", heading: "Send a docket", label: "Send a docket" },
+  { key: "suppliers", heading: "Suppliers", label: "Suppliers" },
+  { key: "sales-files", heading: "Sales files", label: "Sales files" },
+  { key: "recipes", heading: "Recipes", label: "Recipes" },
+  { key: "waste", heading: "Waste", label: "Waste" },
+  {
+    key: "expiry",
+    heading: "Licences and expiry",
+    label: "Licences and expiry",
+  },
+  { key: "pnl", heading: "Profit and loss", label: "Profit and loss" },
+  { key: "bills", heading: "Bills", label: "Bills" },
+  { key: "bank", heading: "Bank questions", label: "Bank questions" },
+  { key: "downloads", heading: "Downloads", label: "Downloads" },
 ];
 
 const MY_WORK = ["today", "shifts", "lists", "requests", "pay", "notices"];
 const MANAGE = [
   "board",
   "roster",
+  "roster-files",
   "approvals",
   "checklists",
   "timesheet",
@@ -79,34 +98,57 @@ const MANAGE = [
 ];
 const OWNER = ["settings", "rules", "changes"];
 
+// "Stock and money": the books pages every role but staff reads, then the ones that depend on a right
+const BOOKS = [
+  "week",
+  "messages",
+  "dockets",
+  "suppliers",
+  "sales-files",
+  "recipes",
+];
+const MONEY = ["bills", "bank", "downloads"];
+
 /**
  * What nav.ts shows each role. The demo owner and partner are not on the team (no staff profile), so they get no
- * "My work" links; the demo bookkeeper has no rights, so its navigation is empty. A manager also gets "Change requests".
+ * "My work" links, and "Waste" sits under "Stock and money" for them. The bookkeeper has money.cash, money.exports and
+ * money.pnl.view (no staff profile), so it gets the books pages and lands on /week. The manager has expiry.manage and
+ * money.cash but not money.pnl.view, and sends dockets from "Dockets". Staff get "Waste" and "Send a docket".
  */
 const NAV: Record<Role, string[]> = {
-  owner: [...MANAGE, ...OWNER],
-  partner: [...MANAGE, ...OWNER],
-  manager: [...MY_WORK, ...MANAGE, "changes"],
-  bookkeeper: [],
-  staff: MY_WORK,
-  staff2: MY_WORK,
+  owner: [...MANAGE, ...BOOKS, "waste", "expiry", "pnl", ...MONEY, ...OWNER],
+  partner: [...MANAGE, ...BOOKS, "waste", "expiry", "pnl", ...MONEY, ...OWNER],
+  manager: [
+    ...MY_WORK,
+    "waste",
+    ...MANAGE,
+    "changes",
+    ...BOOKS,
+    "expiry",
+    "bills",
+    "bank",
+  ],
+  bookkeeper: [...BOOKS, "waste", "pnl", ...MONEY],
+  staff: [...MY_WORK, "waste", "dockets/send"],
+  staff2: [...MY_WORK, "waste", "dockets/send"],
 };
 /**
  * Pages that open (anything else is "not found"). A page can open without being in the navigation: the backend decides,
  * so everyone may read their own notices and their own change requests, and a manager may read the venue settings.
  */
 const ALLOWED: Record<Role, string[]> = {
-  owner: ["notices", ...MANAGE, ...OWNER],
-  partner: ["notices", ...MANAGE, ...OWNER],
-  manager: [...MY_WORK, ...MANAGE, "changes", "settings"],
-  bookkeeper: ["changes"],
-  staff: MY_WORK,
-  staff2: MY_WORK,
+  owner: ["notices", ...NAV.owner],
+  partner: ["notices", ...NAV.partner],
+  manager: [...NAV.manager, "settings"],
+  bookkeeper: [...NAV.bookkeeper, "changes"],
+  staff: NAV.staff,
+  staff2: NAV.staff2,
 };
 const FIRST_PAGE: Partial<Record<Role, string>> = {
   owner: "/board",
   partner: "/board",
   manager: "/board",
+  bookkeeper: "/week",
   staff: "/today",
 };
 
@@ -117,7 +159,7 @@ async function expectNotFound(page: Page) {
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: /^(Today|My shifts|My checklists|My requests|My pay|Notices|Today board|Roster|Approvals|Checklists|Timesheet|Team|Settings|Who can do what|Change requests)$/,
+      name: new RegExp(`^(${ROUTES.map((r) => r.heading).join("|")})$`),
     }),
   ).toHaveCount(0);
 }

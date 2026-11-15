@@ -31,6 +31,8 @@ export const offerSchema = z.object({
   /** True when this offer is the caller's own dropped shift. */
   mine: z.boolean(),
   my_claim: claimSchema.nullable(),
+  /** null (no claim), `waiting`, `got_it`, `not_this_time` or `offer_withdrawn`. */
+  my_outcome: z.string().nullable().optional(),
 });
 export type Offer = z.infer<typeof offerSchema>;
 
@@ -47,9 +49,15 @@ export function myUpcomingShifts(
   );
 }
 
+/** Open offers, plus the ones I asked for that were settled in the last 7 days (so the outcome survives a refresh). */
 export function myOffers(accessToken: string, venueId: string, next: string) {
   return read(
-    backend(accessToken).GET("/v1/venues/{venue_id}/me/offers", base(venueId)),
+    backend(accessToken).GET("/v1/venues/{venue_id}/me/offers", {
+      params: {
+        path: { venue_id: venueId },
+        query: { decided_within_days: 7 },
+      },
+    }),
     z.array(offerSchema),
     next,
   );

@@ -15,6 +15,7 @@ import {
 import {
   api,
   cancelShift,
+  leaveDecided,
   makeShift,
   must,
   publishWeekOf,
@@ -26,9 +27,9 @@ import { watchCsp } from "./manager-ops-helpers";
 skipUnlessLive();
 // Staff shifts and the manager's inbox are shared, so the scenarios run one after another.
 test.describe.configure({ mode: "serial" });
-test.setTimeout(240_000);
+test.setTimeout(400_000);
 test.use({ actionTimeout: 30_000 });
-const slow = expect.configure({ timeout: 25_000 });
+const slow = expect.configure({ timeout: 90_000 });
 
 const NOT_FOUND = /could not be found|not found/i;
 
@@ -247,7 +248,8 @@ async function poolScenario(browser: Browser, approve: boolean) {
     await slow(
       mgr.page.getByRole("heading", { name: "Shift pool" }),
     ).toBeVisible();
-    const title = mgr.page.getByText(`${shown.day}, ${shown.span}`);
+    // the inbox comes first; the same slot may also appear under Recently decided from an earlier run
+    const title = mgr.page.getByText(`${shown.day}, ${shown.span}`).first();
     const row = title.locator(
       "xpath=ancestor::*[.//button[starts-with(normalize-space(),'Give to')]][1]",
     );
@@ -295,6 +297,37 @@ test("a pool claim can be given to the person who asked", async ({
 
 test("a pool claim can be turned down", async ({ browser }) => {
   await poolScenario(browser, false);
+});
+
+test("a decided request appears under Recently decided with the decider's name", async ({
+  browser,
+}) => {
+  const id = await leaveDecided(true, "recently decided e2e");
+  const v = await venuePath();
+  const list = await must(
+    api("manager", "GET", `${v}/requests?decided_within_days=1&limit=100`),
+    "decided",
+  );
+  const row = (
+    list.items as {
+      id: string;
+      decided_by_name: string | null;
+      details: { start_date: string };
+    }[]
+  ).find((r) => r.id === id);
+  expect(row?.decided_by_name, "the API names who decided").toBeTruthy();
+
+  const mgr = await as(browser, "manager");
+  await openVenuePage(mgr.page, mgr.venue, "approvals");
+  await slow(
+    mgr.page.getByRole("heading", { name: "Recently decided", level: 2 }),
+  ).toBeVisible();
+  const card = mgr.page
+    .getByText(`asked for leave on ${row?.details.start_date}`)
+    .locator("xpath=ancestor::*[.//*[contains(text(),'Approved by')]][1]");
+  await slow(card).toContainText(`Approved by ${row?.decided_by_name}`);
+  await slow(card.getByRole("button")).toHaveCount(0);
+  await mgr.context.close();
 });
 
 test("the inbox shows either waiting items or the empty sentence", async ({

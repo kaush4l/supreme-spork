@@ -19,6 +19,8 @@ export type NavItem = {
 export type NavSection = { title: string; items: NavItem[] };
 
 const MANAGER_ROLES = ["owner", "partner", "manager"];
+/** Roles the backend lets read findings, dockets, suppliers and the Monday messages. */
+const BOOKS_ROLES = ["owner", "partner", "manager", "bookkeeper"];
 
 export function can(me: Rights, right: string): boolean {
   return me.rights.includes(right);
@@ -30,6 +32,11 @@ export function isManager(me: Rights): boolean {
 
 export function isOwnerLike(me: Rights): boolean {
   return me.roles.some((role) => role === "owner" || role === "partner");
+}
+
+/** Whether the person may read the venue's stock and money pages (findings, dockets, suppliers, messages). */
+export function readsBooks(me: Rights): boolean {
+  return me.roles.some((role) => BOOKS_ROLES.includes(role));
 }
 
 /** Whether the person works shifts here: they are on the team (an owner who only runs the place is not). */
@@ -50,6 +57,17 @@ export function navFor(me: Rights): NavSection[] {
         { key: "requests", label: "Requests", path: "/requests" },
         { key: "pay", label: "My hours", path: "/pay" },
         { key: "notices", label: "Notices", path: "/notices" },
+        { key: "waste", label: "Waste", path: "/waste" },
+        // Managers send dockets from the Dockets page; staff get their own link.
+        ...(isManager(me)
+          ? []
+          : [
+              {
+                key: "docket-send",
+                label: "Send a docket",
+                path: "/dockets/send",
+              },
+            ]),
       ],
     });
   }
@@ -59,6 +77,13 @@ export function navFor(me: Rights): NavSection[] {
   }
   if (can(me, "roster.build")) {
     manage.push({ key: "roster", label: "Roster", path: "/roster" });
+  }
+  if (can(me, "roster.build")) {
+    manage.push({
+      key: "roster-files",
+      label: "Roster files",
+      path: "/roster-files",
+    });
   }
   if (can(me, "roster.requests.decide")) {
     manage.push({ key: "approvals", label: "Approvals", path: "/approvals" });
@@ -81,6 +106,41 @@ export function navFor(me: Rights): NavSection[] {
   }
   if (manage.length > 0)
     sections.push({ title: "Running the venue", items: manage });
+  const books: NavItem[] = [];
+  if (readsBooks(me)) {
+    books.push(
+      { key: "week", label: "This week", path: "/week" },
+      { key: "messages", label: "Monday messages", path: "/messages" },
+      { key: "dockets", label: "Dockets", path: "/dockets" },
+      { key: "suppliers", label: "Suppliers", path: "/suppliers" },
+      { key: "sales-files", label: "Sales files", path: "/sales-files" },
+      { key: "recipes", label: "Recipes", path: "/recipes" },
+    );
+    if (!worksShifts(me)) {
+      books.push({ key: "waste", label: "Waste", path: "/waste" });
+    }
+  }
+  if (can(me, "expiry.manage")) {
+    books.push({
+      key: "expiry",
+      label: "Licences and expiry",
+      path: "/expiry",
+    });
+  }
+  if (can(me, "money.pnl.view")) {
+    books.push({ key: "pnl", label: "Profit and loss", path: "/pnl" });
+  }
+  if (can(me, "money.cash")) {
+    books.push(
+      { key: "bills", label: "Bills", path: "/bills" },
+      { key: "bank", label: "Bank questions", path: "/bank" },
+    );
+  }
+  if (can(me, "money.exports")) {
+    books.push({ key: "downloads", label: "Downloads", path: "/downloads" });
+  }
+  if (books.length > 0)
+    sections.push({ title: "Stock and money", items: books });
   if (isOwnerLike(me)) {
     sections.push({
       title: "Owner",

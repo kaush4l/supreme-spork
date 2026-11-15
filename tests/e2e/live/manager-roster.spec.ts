@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { signIn, skipUnlessLive, watchForBrowserErrors } from "../support/live";
+import { api, must, venuePath } from "../support/staff-api";
 import {
   addDaysIso,
   addShift,
@@ -52,6 +53,36 @@ test.describe("manager roster", () => {
     await openRoster(page, v);
     await expect(page.getByRole("heading", { level: 3 })).toHaveCount(7);
     await expect(page.getByText(/ to .*/).first()).toBeVisible();
+  });
+
+  test("no week in the address opens the week the backend names", async ({
+    page,
+  }) => {
+    const v = await signIn(page, "manager");
+    const grid = await must(
+      api("manager", "GET", `${await venuePath()}/roster`),
+      "roster",
+    );
+    const day = (iso: string, plus: number) => {
+      const d = new Date(`${iso}T12:00:00Z`);
+      d.setUTCDate(d.getUTCDate() + plus);
+      return new Intl.DateTimeFormat("en-AU", {
+        timeZone: "UTC",
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+      }).format(d);
+    };
+    await openRoster(page, v);
+    await expect(
+      page.getByText(
+        `${day(grid.week_start, 0)} to ${day(grid.week_start, 6)}`,
+      ),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: "Next week" })).toHaveAttribute(
+      "href",
+      /week=/,
+    );
   });
 
   test("an empty week shows the empty state, copy offered, publish disabled", async ({

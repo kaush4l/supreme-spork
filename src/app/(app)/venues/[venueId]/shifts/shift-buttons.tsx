@@ -52,12 +52,6 @@ export function ShiftButton({
         setMessage(result.error.message || "That did not work.");
         return;
       }
-      if (kind === "claim" && "taken" in result.data)
-        setNotice(
-          result.data.taken
-            ? "It is yours."
-            : "Asked. Your manager will decide.",
-        );
       if (kind === "withdrawClaim") setNotice("Your request is taken back.");
       if (kind === "drop")
         setNotice("Put in the pool. It stays yours until someone is given it.");
