@@ -13,6 +13,7 @@ test("every page response carries the security headers and no framework banner",
   expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
   expect(headers["permissions-policy"]).toContain("camera=()");
   expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
+  expect(headers["cross-origin-resource-policy"]).toBe("same-origin");
   expect(headers["cache-control"]).toBe("no-store");
   expect(headers["x-powered-by"]).toBeUndefined();
   const csp = headers["content-security-policy"];
