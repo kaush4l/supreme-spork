@@ -9,9 +9,9 @@
  */
 export function buildCsp(
   nonce: string,
-  options: { dev: boolean; imgSources?: string[] },
+  options: { dev: boolean; imgSources?: string[]; frameSources?: string[] },
 ): string {
-  const { dev, imgSources = [] } = options;
+  const { dev, imgSources = [], frameSources = [] } = options;
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
@@ -22,6 +22,9 @@ export function buildCsp(
     `img-src 'self' blob: data: ${imgSources.join(" ")}`.trim(),
     "font-src 'self'",
     "connect-src 'self'",
+    frameSources.length > 0
+      ? `frame-src ${frameSources.join(" ")}`
+      : "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

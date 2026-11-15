@@ -51,11 +51,9 @@ test("the page runs under the policy: no violation, and the Astryx styles apply"
       violations.push(message.text());
   });
   await page.goto("/", { waitUntil: "networkidle" });
-  await expect(
-    page.getByRole("heading", { name: "Supreme Spork" }),
-  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sign in" })).toBeVisible();
   const button = await page
-    .getByRole("button", { name: "Hello Astryx" })
+    .getByRole("button", { name: "Sign in" })
     .evaluate((node) => {
       const style = getComputedStyle(node);
       return { background: style.backgroundColor, font: style.fontFamily };

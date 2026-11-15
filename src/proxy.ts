@@ -9,7 +9,13 @@ import { buildCsp, newNonce } from "@/server/csp";
  */
 export async function proxy(request: NextRequest) {
   const nonce = newNonce();
-  const csp = buildCsp(nonce, { dev: process.env.NODE_ENV === "development" });
+  const csp = buildCsp(nonce, {
+    dev: process.env.NODE_ENV === "development",
+    // The CAPTCHA widget is a frame from Cloudflare, and only when a site key is configured.
+    frameSources: process.env.TURNSTILE_SITE_KEY
+      ? ["https://challenges.cloudflare.com"]
+      : [],
+  });
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);

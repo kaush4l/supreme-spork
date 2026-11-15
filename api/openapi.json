@@ -1,6 +1,130 @@
 {
   "components": {
     "schemas": {
+      "ApprovalChange": {
+        "additionalProperties": false,
+        "description": "Who approves one right: off (act directly), owner, or partner (the partner or the owner).",
+        "properties": {
+          "approval": {
+            "title": "Approval",
+            "type": "string"
+          },
+          "capability": {
+            "title": "Capability",
+            "type": "string"
+          }
+        },
+        "required": ["capability", "approval"],
+        "title": "ApprovalChange",
+        "type": "object"
+      },
+      "Assignment": {
+        "additionalProperties": false,
+        "properties": {
+          "external_id": {
+            "title": "External Id",
+            "type": "string"
+          },
+          "staff_id": {
+            "title": "Staff Id",
+            "type": "string"
+          }
+        },
+        "required": ["external_id", "staff_id"],
+        "title": "Assignment",
+        "type": "object"
+      },
+      "AvailabilityIn": {
+        "additionalProperties": false,
+        "description": "One availability entry: weekly (weekday 0 to 6 and a time window) or once (a first and last day).",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "from_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Time"
+          },
+          "kind": {
+            "enum": ["weekly", "once"],
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "to_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Time"
+          },
+          "weekday": {
+            "anyOf": [
+              {
+                "maximum": 6.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekday"
+          }
+        },
+        "required": ["kind", "available"],
+        "title": "AvailabilityIn",
+        "type": "object"
+      },
       "BankFileNote": {
         "properties": {
           "note": {
@@ -244,6 +368,30 @@
         "title": "BillMarkRequest",
         "type": "object"
       },
+      "BlackoutIn": {
+        "additionalProperties": false,
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "reason": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": ["start_date", "end_date", "reason"],
+        "title": "BlackoutIn",
+        "type": "object"
+      },
       "Body_import_recipe_file_v1_venues__venue_id__recipes_import_file_post": {
         "properties": {
           "file": {
@@ -450,6 +598,26 @@
         "title": "CategoryCreate",
         "type": "object"
       },
+      "ChangeDecision": {
+        "additionalProperties": false,
+        "description": "An optional note when approving; the reason when rejecting.",
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "ChangeDecision",
+        "type": "object"
+      },
       "ChangeIn": {
         "description": "Only the fields sent are changed; send null to clear one. `lines` is keyed by line number.",
         "properties": {
@@ -536,6 +704,52 @@
           }
         },
         "title": "ChangeIn",
+        "type": "object"
+      },
+      "ClockIn": {
+        "description": "What the device sends. Only the location method needs it: where the phone is, and how accurate that is.",
+        "properties": {
+          "accuracy_m": {
+            "anyOf": [
+              {
+                "maximum": 100000.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy M"
+          },
+          "latitude": {
+            "anyOf": [
+              {
+                "maximum": 90.0,
+                "minimum": -90.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latitude"
+          },
+          "longitude": {
+            "anyOf": [
+              {
+                "maximum": 180.0,
+                "minimum": -180.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Longitude"
+          }
+        },
+        "title": "ClockIn",
         "type": "object"
       },
       "ClockOut": {
@@ -626,6 +840,30 @@
           }
         },
         "title": "Decision",
+        "type": "object"
+      },
+      "DraftDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "approve": {
+            "title": "Approve",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": ["approve"],
+        "title": "DraftDecision",
         "type": "object"
       },
       "EntryCorrection": {
@@ -876,6 +1114,89 @@
         "title": "ExpiryItemRemoveIn",
         "type": "object"
       },
+      "GroupChange": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 60,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "maximum": 999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          }
+        },
+        "title": "GroupChange",
+        "type": "object"
+      },
+      "GroupIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 60,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "position": {
+            "anyOf": [
+              {
+                "maximum": 999.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          }
+        },
+        "required": ["name"],
+        "title": "GroupIn",
+        "type": "object"
+      },
+      "GroupMemberIn": {
+        "additionalProperties": false,
+        "properties": {
+          "staff_id": {
+            "title": "Staff Id",
+            "type": "string"
+          }
+        },
+        "required": ["staff_id"],
+        "title": "GroupMemberIn",
+        "type": "object"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -920,9 +1241,12 @@
         "type": "object"
       },
       "InviteIn": {
+        "additionalProperties": false,
         "properties": {
           "approval_limit_cents": {
             "default": 0,
+            "maximum": 1000000000.0,
+            "minimum": 0.0,
             "title": "Approval Limit Cents",
             "type": "integer"
           },
@@ -1668,6 +1992,30 @@
         "title": "Note",
         "type": "object"
       },
+      "OfferDecision": {
+        "additionalProperties": false,
+        "properties": {
+          "approve": {
+            "title": "Approve",
+            "type": "boolean"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "required": ["approve"],
+        "title": "OfferDecision",
+        "type": "object"
+      },
       "PermissionChange": {
         "additionalProperties": false,
         "description": "Give a role a right (true), take it away (false), or go back to the default (null).",
@@ -1829,6 +2177,20 @@
               }
             ],
             "title": "Name"
+          },
+          "required_certificates": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Required Certificates"
           }
         },
         "title": "PositionChange",
@@ -1847,6 +2209,15 @@
             "minLength": 1,
             "title": "Name",
             "type": "string"
+          },
+          "required_certificates": {
+            "default": [],
+            "description": "Certificates a person needs to work this position (rsa, food_safety, first_aid, other).",
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Certificates",
+            "type": "array"
           }
         },
         "required": ["name"],
@@ -2000,6 +2371,59 @@
         "title": "RejectIn",
         "type": "object"
       },
+      "ReplyIn": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "external_id": {
+            "title": "External Id",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "response": {
+            "enum": ["accept", "decline", "propose", "pickup"],
+            "title": "Response",
+            "type": "string"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          }
+        },
+        "required": ["external_id", "response"],
+        "title": "ReplyIn",
+        "type": "object"
+      },
       "ReportNote": {
         "properties": {
           "note": {
@@ -2066,6 +2490,154 @@
           }
         },
         "title": "RosterReason",
+        "type": "object"
+      },
+      "RosterRulesChange": {
+        "additionalProperties": false,
+        "description": "`rules` maps a rule key to its new setting; null puts that rule back to its default.",
+        "properties": {
+          "rules": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Rules",
+            "type": "object"
+          }
+        },
+        "required": ["rules"],
+        "title": "RosterRulesChange",
+        "type": "object"
+      },
+      "RosterTemplateApply": {
+        "additionalProperties": false,
+        "properties": {
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": ["start"],
+        "title": "RosterTemplateApply",
+        "type": "object"
+      },
+      "RosterTemplateChange": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "slots": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/RosterTemplateSlotIn"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slots"
+          }
+        },
+        "title": "RosterTemplateChange",
+        "type": "object"
+      },
+      "RosterTemplateIn": {
+        "additionalProperties": false,
+        "properties": {
+          "length_days": {
+            "title": "Length Days",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "slots": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/RosterTemplateSlotIn"
+            },
+            "title": "Slots",
+            "type": "array"
+          }
+        },
+        "required": ["name", "length_days"],
+        "title": "RosterTemplateIn",
+        "type": "object"
+      },
+      "RosterTemplateSlotIn": {
+        "additionalProperties": false,
+        "description": "Day 0 is the first day of the template. `end` at or before `start` means the shift ends the next morning.",
+        "properties": {
+          "count": {
+            "default": 1,
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "day": {
+            "maximum": 13.0,
+            "minimum": 0.0,
+            "title": "Day",
+            "type": "integer"
+          },
+          "end": {
+            "title": "End",
+            "type": "string"
+          },
+          "position": {
+            "minLength": 1,
+            "title": "Position",
+            "type": "string"
+          },
+          "start": {
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": ["day", "position", "start", "end"],
+        "title": "RosterTemplateSlotIn",
         "type": "object"
       },
       "RuleChange": {
@@ -2235,6 +2807,38 @@
           }
         },
         "title": "SaveAsTemplateIn",
+        "type": "object"
+      },
+      "SendIn": {
+        "additionalProperties": false,
+        "description": "`mode` defaults to the venue's rule (`send_mode`). `reply_hours` overrides the draft reply time for this draft (24, 48, 72).",
+        "properties": {
+          "mode": {
+            "anyOf": [
+              {
+                "enum": ["direct", "draft"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mode"
+          },
+          "reply_hours": {
+            "anyOf": [
+              {
+                "enum": [24, 48, 72],
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reply Hours"
+          }
+        },
+        "title": "SendIn",
         "type": "object"
       },
       "SettingsChange": {
@@ -2434,6 +3038,96 @@
         },
         "required": ["position", "start", "end"],
         "title": "ShiftIn",
+        "type": "object"
+      },
+      "StaffAvailabilityIn": {
+        "additionalProperties": false,
+        "description": "Availability a manager enters for a person who has not signed in yet. Same shape as the person's own.",
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "from_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Time"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          },
+          "to_time": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Time"
+          },
+          "weekday": {
+            "anyOf": [
+              {
+                "maximum": 6.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weekday"
+          }
+        },
+        "required": ["kind", "available"],
+        "title": "StaffAvailabilityIn",
         "type": "object"
       },
       "StaffCertificateIn": {
@@ -2649,6 +3343,23 @@
         },
         "required": ["name"],
         "title": "StaffIn",
+        "type": "object"
+      },
+      "SuggestionsAccept": {
+        "additionalProperties": false,
+        "properties": {
+          "assignments": {
+            "items": {
+              "$ref": "#/components/schemas/Assignment"
+            },
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Assignments",
+            "type": "array"
+          }
+        },
+        "required": ["assignments"],
+        "title": "SuggestionsAccept",
         "type": "object"
       },
       "SupplierChange": {
@@ -2919,6 +3630,25 @@
         },
         "required": ["name"],
         "title": "VenueIn",
+        "type": "object"
+      },
+      "VenueLocationIn": {
+        "properties": {
+          "latitude": {
+            "maximum": 90.0,
+            "minimum": -90.0,
+            "title": "Latitude",
+            "type": "number"
+          },
+          "longitude": {
+            "maximum": 180.0,
+            "minimum": -180.0,
+            "title": "Longitude",
+            "type": "number"
+          }
+        },
+        "required": ["latitude", "longitude"],
+        "title": "VenueLocationIn",
         "type": "object"
       },
       "WasteChangeIn": {
@@ -3273,6 +4003,369 @@
           }
         },
         "summary": "Me"
+      }
+    },
+    "/v1/me/availability": {
+      "get": {
+        "description": "When you can and cannot work, shared with every venue you work at.",
+        "operationId": "my_availability_v1_me_availability_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response My Availability V1 Me Availability Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Availability"
+      },
+      "post": {
+        "operationId": "add_my_availability_v1_me_availability_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvailabilityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Add My Availability V1 Me Availability Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add My Availability"
+      }
+    },
+    "/v1/me/availability/{row_id}/remove": {
+      "post": {
+        "operationId": "remove_my_availability_v1_me_availability__row_id__remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Remove My Availability V1 Me Availability  Row Id  Remove Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove My Availability"
+      }
+    },
+    "/v1/me/calendar": {
+      "get": {
+        "description": "Whether you have a calendar link. The link itself is shown only when you make it.",
+        "operationId": "my_calendar_v1_me_calendar_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response My Calendar V1 Me Calendar Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Calendar"
+      },
+      "post": {
+        "description": "Make your calendar link (or replace it: the old one stops working at once). Add `path` to the API's address and subscribe\nGoogle or Apple Calendar to it. It shows your published shifts at every venue, with no pay. Keep it private.",
+        "operationId": "make_my_calendar_link_v1_me_calendar_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Make My Calendar Link V1 Me Calendar Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Make My Calendar Link"
+      }
+    },
+    "/v1/me/calendar/revoke": {
+      "post": {
+        "operationId": "revoke_my_calendar_link_v1_me_calendar_revoke_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Revoke My Calendar Link V1 Me Calendar Revoke Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revoke My Calendar Link"
+      }
+    },
+    "/v1/me/calendar/{token}.ics": {
+      "get": {
+        "description": "The person's published shifts at every venue as an iCalendar feed, for Google or Apple Calendar. The secret token in the\naddress is the only sign-in (a calendar app cannot send one): make or reset it with POST /v1/me/calendar. An unknown or\nreplaced token is a 404. No pay and no notes.",
+        "operationId": "calendar_feed_v1_me_calendar__token__ics_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "title": "Token",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Calendar Feed"
       }
     },
     "/v1/me/certificates": {
@@ -6029,6 +7122,507 @@
           }
         },
         "summary": "Category Change"
+      }
+    },
+    "/v1/venues/{venue_id}/change-requests": {
+      "get": {
+        "description": "Requests you asked for, and those you could decide. `status` is open, approved, rejected, withdrawn, applied,\nfailed or stale.",
+        "operationId": "list_requests_v1_venues__venue_id__change_requests_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Requests V1 Venues  Venue Id  Change Requests Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Requests"
+      }
+    },
+    "/v1/venues/{venue_id}/change-requests/{request_id}": {
+      "get": {
+        "operationId": "get_request_v1_venues__venue_id__change_requests__request_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Request V1 Venues  Venue Id  Change Requests  Request Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Request"
+      }
+    },
+    "/v1/venues/{venue_id}/change-requests/{request_id}/approve": {
+      "post": {
+        "description": "Approve and make the change at once. The answer says how it ended: applied, failed (with the reason) or stale\n(the thing changed since it was asked). 403 for someone who does not approve this here and for the asker.",
+        "operationId": "approve_request_v1_venues__venue_id__change_requests__request_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ChangeDecision"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Approve Request V1 Venues  Venue Id  Change Requests  Request Id  Approve Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Request"
+      }
+    },
+    "/v1/venues/{venue_id}/change-requests/{request_id}/reject": {
+      "post": {
+        "operationId": "reject_request_v1_venues__venue_id__change_requests__request_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ChangeDecision"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Reject Request V1 Venues  Venue Id  Change Requests  Request Id  Reject Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject Request"
+      }
+    },
+    "/v1/venues/{venue_id}/change-requests/{request_id}/withdraw": {
+      "post": {
+        "operationId": "withdraw_request_v1_venues__venue_id__change_requests__request_id__withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "request_id",
+            "required": true,
+            "schema": {
+              "title": "Request Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Withdraw Request V1 Venues  Venue Id  Change Requests  Request Id  Withdraw Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw Request"
       }
     },
     "/v1/venues/{venue_id}/dockets/duplicates": {
@@ -9039,6 +10633,83 @@
         "summary": "Cancel Invite"
       }
     },
+    "/v1/venues/{venue_id}/me/blackouts": {
+      "get": {
+        "description": "For anyone at the venue: the dates leave cannot be requested, so a screen can say so before asking.",
+        "operationId": "my_blackouts_v1_venues__venue_id__me_blackouts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response My Blackouts V1 Venues  Venue Id  Me Blackouts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Blackouts"
+      }
+    },
     "/v1/venues/{venue_id}/me/clock": {
       "get": {
         "operationId": "my_clock_v1_venues__venue_id__me_clock_get",
@@ -9114,6 +10785,7 @@
     },
     "/v1/venues/{venue_id}/me/clock-in": {
       "post": {
+        "description": "Clock in. When the venue's method is location, send the phone's `latitude`, `longitude` (and `accuracy_m`): 422\n`outside_location` when too far, `location_needed` when missing. The answer says which method passed and whether it was\naccepted flagged.",
         "operationId": "clock_in_v1_venues__venue_id__me_clock_in_post",
         "parameters": [
           {
@@ -9174,6 +10846,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ClockIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {
@@ -9305,6 +10994,264 @@
           }
         },
         "summary": "Clock Out"
+      }
+    },
+    "/v1/venues/{venue_id}/me/offers": {
+      "get": {
+        "description": "Shifts offered that you could work (and your own drops), with your claim if you made one.",
+        "operationId": "my_offers_v1_venues__venue_id__me_offers_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response My Offers V1 Venues  Venue Id  Me Offers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Offers"
+      }
+    },
+    "/v1/venues/{venue_id}/me/offers/{offer_id}/claim": {
+      "post": {
+        "description": "Ask for an offered shift. If the venue's rule is first come first served and you are eligible, it is yours now; otherwise\nthe manager decides. 422 `not_eligible` says why you cannot take it.",
+        "operationId": "claim_offer_v1_venues__venue_id__me_offers__offer_id__claim_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Claim Offer V1 Venues  Venue Id  Me Offers  Offer Id  Claim Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Claim Offer"
+      }
+    },
+    "/v1/venues/{venue_id}/me/offers/{offer_id}/withdraw": {
+      "post": {
+        "operationId": "withdraw_my_offer_v1_venues__venue_id__me_offers__offer_id__withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Withdraw My Offer V1 Venues  Venue Id  Me Offers  Offer Id  Withdraw Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw My Offer"
       }
     },
     "/v1/venues/{venue_id}/me/profile": {
@@ -9655,6 +11602,266 @@
         "summary": "Ask Swap"
       }
     },
+    "/v1/venues/{venue_id}/me/rights": {
+      "get": {
+        "description": "What the signed-in person may do at this venue: their roles, every right they hold here (the owner's rules\napplied), and their approval limit. The UI draws its navigation and buttons from this; the backend still checks\nevery request itself.",
+        "operationId": "my_rights_v1_venues__venue_id__me_rights_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response My Rights V1 Venues  Venue Id  Me Rights Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Rights"
+      }
+    },
+    "/v1/venues/{venue_id}/me/roster/drafts": {
+      "get": {
+        "description": "Draft rosters waiting for your reply: your shifts with your answers, and the open shifts you may pick up.",
+        "operationId": "my_drafts_v1_venues__venue_id__me_roster_drafts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response My Drafts V1 Venues  Venue Id  Me Roster Drafts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Drafts"
+      }
+    },
+    "/v1/venues/{venue_id}/me/roster/drafts/{draft_id}/replies": {
+      "post": {
+        "description": "Accept or decline a shift of yours, propose another time, or pick up an open shift. You can change your answer until\nthe manager decides it. Only you and the manager see it.",
+        "operationId": "reply_to_draft_v1_venues__venue_id__me_roster_drafts__draft_id__replies_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplyIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Reply To Draft V1 Venues  Venue Id  Me Roster Drafts  Draft Id  Replies Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reply To Draft"
+      }
+    },
     "/v1/venues/{venue_id}/me/shifts": {
       "get": {
         "description": "Published shifts only. Defaults to today and the next 14 days.",
@@ -9764,6 +11971,105 @@
           }
         },
         "summary": "My Shifts"
+      }
+    },
+    "/v1/venues/{venue_id}/me/shifts/{external_id}/drop": {
+      "post": {
+        "description": "Put one of your published shifts in the pool. Eligible colleagues are told; the manager decides who gets it. The shift stays\nyours until then.",
+        "operationId": "drop_shift_v1_venues__venue_id__me_shifts__external_id__drop_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "external_id",
+            "required": true,
+            "schema": {
+              "title": "External Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Drop Shift V1 Venues  Venue Id  Me Shifts  External Id  Drop Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Drop Shift"
       }
     },
     "/v1/venues/{venue_id}/menu-items": {
@@ -10514,6 +12820,106 @@
           }
         },
         "summary": "Change Permission"
+      }
+    },
+    "/v1/venues/{venue_id}/permissions/approval": {
+      "post": {
+        "description": "The owner says who approves a right (off, owner, partner). Only some rights can be set (422 otherwise). Returns\nthe right as it now stands, the same shape as an item on the rules page.",
+        "operationId": "change_approval_v1_venues__venue_id__permissions_approval_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Change Approval V1 Venues  Venue Id  Permissions Approval Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Approval"
       }
     },
     "/v1/venues/{venue_id}/pnl": {
@@ -12893,6 +15299,415 @@
         "summary": "Roster Hours"
       }
     },
+    "/v1/venues/{venue_id}/roster/blackouts": {
+      "get": {
+        "description": "Dates leave cannot be requested (from today on).",
+        "operationId": "list_blackouts_v1_venues__venue_id__roster_blackouts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Blackouts V1 Venues  Venue Id  Roster Blackouts Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Blackouts"
+      },
+      "post": {
+        "operationId": "add_blackout_v1_venues__venue_id__roster_blackouts_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlackoutIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Add Blackout V1 Venues  Venue Id  Roster Blackouts Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Blackout"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/blackouts/{blackout_id}/remove": {
+      "post": {
+        "operationId": "remove_blackout_v1_venues__venue_id__roster_blackouts__blackout_id__remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "blackout_id",
+            "required": true,
+            "schema": {
+              "title": "Blackout Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Remove Blackout V1 Venues  Venue Id  Roster Blackouts  Blackout Id  Remove Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Blackout"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/clock/location": {
+      "get": {
+        "description": "Where the venue is (for the location clock-in method), or nulls when it has not been set.",
+        "operationId": "venue_location_v1_venues__venue_id__roster_clock_location_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Venue Location V1 Venues  Venue Id  Roster Clock Location Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Venue Location"
+      },
+      "put": {
+        "description": "Set the venue's location. It is the point the radius rule is measured from (the `roster.rules.change` right).",
+        "operationId": "set_venue_location_v1_venues__venue_id__roster_clock_location_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VenueLocationIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Set Venue Location V1 Venues  Venue Id  Roster Clock Location Put",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Venue Location"
+      }
+    },
     "/v1/venues/{venue_id}/roster/copy": {
       "post": {
         "description": "Copy the week before `week` into `week`, which must be empty.",
@@ -12993,6 +15808,841 @@
         "summary": "Copy Week"
       }
     },
+    "/v1/venues/{venue_id}/roster/drafts/{draft_id}/board": {
+      "get": {
+        "description": "Who accepted, declined, proposed another time, wants an open shift, or has not replied.",
+        "operationId": "draft_board_v1_venues__venue_id__roster_drafts__draft_id__board_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Draft Board V1 Venues  Venue Id  Roster Drafts  Draft Id  Board Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Draft Board"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/drafts/{draft_id}/cancel": {
+      "post": {
+        "operationId": "cancel_draft_v1_venues__venue_id__roster_drafts__draft_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Cancel Draft V1 Venues  Venue Id  Roster Drafts  Draft Id  Cancel Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Cancel Draft"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/drafts/{draft_id}/publish": {
+      "post": {
+        "description": "Publish the draft's week. When the venue's rule says to wait for replies, 409 `replies_outstanding` until they are in.",
+        "operationId": "publish_draft_v1_venues__venue_id__roster_drafts__draft_id__publish_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Publish Draft"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/drafts/{draft_id}/replies/{reply_id}/decide": {
+      "post": {
+        "description": "Approve or reject a proposed time or a pick-up. Approving edits the shift through the roster builder.",
+        "operationId": "decide_reply_v1_venues__venue_id__roster_drafts__draft_id__replies__reply_id__decide_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "draft_id",
+            "required": true,
+            "schema": {
+              "title": "Draft Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "reply_id",
+            "required": true,
+            "schema": {
+              "title": "Reply Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Decide Reply V1 Venues  Venue Id  Roster Drafts  Draft Id  Replies  Reply Id  Decide Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decide Reply"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/groups": {
+      "get": {
+        "description": "The owner's staff groups in their order, with who is in each. `retired=true` includes retired ones.",
+        "operationId": "list_groups_v1_venues__venue_id__roster_groups_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "retired",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Retired",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Groups V1 Venues  Venue Id  Roster Groups Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Groups"
+      },
+      "post": {
+        "operationId": "create_group_v1_venues__venue_id__roster_groups_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Create Group V1 Venues  Venue Id  Roster Groups Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Group"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/groups/{group_id}": {
+      "post": {
+        "description": "Rename, reorder (a smaller position is suggested first) or retire a group.",
+        "operationId": "change_group_v1_venues__venue_id__roster_groups__group_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "title": "Group Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Change Group V1 Venues  Venue Id  Roster Groups  Group Id  Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Group"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/groups/{group_id}/members": {
+      "post": {
+        "operationId": "add_member_v1_venues__venue_id__roster_groups__group_id__members_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "title": "Group Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupMemberIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Add Member V1 Venues  Venue Id  Roster Groups  Group Id  Members Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Member"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/groups/{group_id}/members/{staff_id}/remove": {
+      "post": {
+        "operationId": "remove_member_v1_venues__venue_id__roster_groups__group_id__members__staff_id__remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "group_id",
+            "required": true,
+            "schema": {
+              "title": "Group Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "staff_id",
+            "required": true,
+            "schema": {
+              "title": "Staff Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Remove Member V1 Venues  Venue Id  Roster Groups  Group Id  Members  Staff Id  Remove Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Member"
+      }
+    },
     "/v1/venues/{venue_id}/roster/history": {
       "get": {
         "operationId": "history_v1_venues__venue_id__roster_history_get",
@@ -13079,9 +16729,283 @@
         "summary": "History"
       }
     },
+    "/v1/venues/{venue_id}/roster/offers": {
+      "get": {
+        "description": "Open offers with who has asked for each.",
+        "operationId": "offer_board_v1_venues__venue_id__roster_offers_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Offer Board V1 Venues  Venue Id  Roster Offers Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Offer Board"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/offers/{offer_id}/claims/{claim_id}/decide": {
+      "post": {
+        "description": "Give the shift to this person (the week is republished if it had no other unpublished edits) or say not this time.",
+        "operationId": "decide_claim_v1_venues__venue_id__roster_offers__offer_id__claims__claim_id__decide_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "claim_id",
+            "required": true,
+            "schema": {
+              "title": "Claim Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferDecision"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Decide Claim V1 Venues  Venue Id  Roster Offers  Offer Id  Claims  Claim Id  Decide Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decide Claim"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/offers/{offer_id}/withdraw": {
+      "post": {
+        "operationId": "withdraw_offer_v1_venues__venue_id__roster_offers__offer_id__withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Withdraw Offer V1 Venues  Venue Id  Roster Offers  Offer Id  Withdraw Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw Offer"
+      }
+    },
     "/v1/venues/{venue_id}/roster/publish": {
       "post": {
-        "description": "Publish the week. Staff then see exactly these shifts. Publishing again with no edits changes nothing.",
+        "description": "Publish the week. Staff then see exactly these shifts. Publishing again with no edits changes nothing. When the\nowner has made publishing need approval for this caller, a request is stored and the answer is 202 `needs_approval`.",
         "operationId": "publish_v1_venues__venue_id__roster_publish_post",
         "parameters": [
           {
@@ -13260,6 +17184,178 @@
           }
         },
         "summary": "Published"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/rules": {
+      "get": {
+        "description": "Every roster rule with its label, help, choices, default and current value, grouped for the page. Anyone who may\nbuild the roster can read it; changing it is the `roster.rules.change` right (owner and partner by default).",
+        "operationId": "rules_page_v1_venues__venue_id__roster_rules_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Rules Page V1 Venues  Venue Id  Roster Rules Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rules Page"
+      },
+      "patch": {
+        "description": "Change one or more rules. A bad key or value is a 422 and nothing changes. Returns the whole page as it now stands.",
+        "operationId": "change_rules_v1_venues__venue_id__roster_rules_patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RosterRulesChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Change Rules V1 Venues  Venue Id  Roster Rules Patch",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Rules"
       }
     },
     "/v1/venues/{venue_id}/roster/shifts": {
@@ -13536,6 +17632,105 @@
         "summary": "Cancel Shift"
       }
     },
+    "/v1/venues/{venue_id}/roster/shifts/{external_id}/offer": {
+      "post": {
+        "description": "Offer an open shift in a published week to the people who could work it. They are told and can ask for it.",
+        "operationId": "offer_shift_v1_venues__venue_id__roster_shifts__external_id__offer_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "external_id",
+            "required": true,
+            "schema": {
+              "title": "External Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Offer Shift V1 Venues  Venue Id  Roster Shifts  External Id  Offer Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Offer Shift"
+      }
+    },
     "/v1/venues/{venue_id}/roster/shifts/{external_id}/open": {
       "post": {
         "operationId": "open_shift_v1_venues__venue_id__roster_shifts__external_id__open_post",
@@ -13616,6 +17811,776 @@
           }
         },
         "summary": "Open Shift"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/templates": {
+      "get": {
+        "operationId": "list_templates_v1_venues__venue_id__roster_templates_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "retired",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Retired",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response List Templates V1 Venues  Venue Id  Roster Templates Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Templates"
+      },
+      "post": {
+        "description": "A template for 1, 7 or 14 days. Each slot is a day, a position, a start and end time and how many people.",
+        "operationId": "create_template_v1_venues__venue_id__roster_templates_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RosterTemplateIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Create Template V1 Venues  Venue Id  Roster Templates Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Template"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/templates/{template_id}": {
+      "get": {
+        "operationId": "get_template_v1_venues__venue_id__roster_templates__template_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "title": "Template Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Template V1 Venues  Venue Id  Roster Templates  Template Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Template"
+      },
+      "post": {
+        "description": "Rename, replace the slots, or retire. The length cannot change: make a new template.",
+        "operationId": "change_template_v1_venues__venue_id__roster_templates__template_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "title": "Template Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RosterTemplateChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Change Template V1 Venues  Venue Id  Roster Templates  Template Id  Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Change Template"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/templates/{template_id}/apply": {
+      "post": {
+        "description": "Make the template's open shifts from a start date (a Monday for a week or two weeks). Shifts already there stay.\nSend an Idempotency-Key: applying twice makes the shifts twice.",
+        "operationId": "apply_template_v1_venues__venue_id__roster_templates__template_id__apply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "template_id",
+            "required": true,
+            "schema": {
+              "title": "Template Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RosterTemplateApply"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Apply Template V1 Venues  Venue Id  Roster Templates  Template Id  Apply Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Apply Template"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/weeks/{week}/send": {
+      "post": {
+        "description": "Send the week. `direct` publishes it now (staff are told); `draft` sends it for staff to reply to first. The default\nis the venue's rule. Sending a draft needs the build right; publishing straight away follows the publish right and any\napproval the owner set.",
+        "operationId": "send_week_v1_venues__venue_id__roster_weeks__week__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Week",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/SendIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Week"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/weeks/{week}/suggestions": {
+      "get": {
+        "description": "For each open shift in the week, who could fill it, best first, with the reasons; and who was left out and why.",
+        "operationId": "week_suggestions_v1_venues__venue_id__roster_weeks__week__suggestions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Week",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Week Suggestions V1 Venues  Venue Id  Roster Weeks  Week  Suggestions Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Week Suggestions"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/weeks/{week}/suggestions/accept": {
+      "post": {
+        "description": "Fill the shifts you chose with the people you chose. Ones that no longer work are returned in `skipped`.",
+        "operationId": "accept_suggestions_v1_venues__venue_id__roster_weeks__week__suggestions_accept_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "week",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Week",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestionsAccept"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Accept Suggestions V1 Venues  Venue Id  Roster Weeks  Week  Suggestions Accept Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Accept Suggestions"
       }
     },
     "/v1/venues/{venue_id}/sales-reports/review": {
@@ -14954,6 +19919,374 @@
           }
         },
         "summary": "Change Staff"
+      }
+    },
+    "/v1/venues/{venue_id}/staff/{staff_id}/availability": {
+      "get": {
+        "description": "Who can work when. `owner` says whose it is: the person's own (they have signed in) or this venue's entry.",
+        "operationId": "staff_availability_v1_venues__venue_id__staff__staff_id__availability_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "staff_id",
+            "required": true,
+            "schema": {
+              "title": "Staff Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Staff Availability V1 Venues  Venue Id  Staff  Staff Id  Availability Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staff Availability"
+      },
+      "post": {
+        "description": "For a person who has not signed in. Once they do, it is copied to their own availability and theirs wins (409\n`person_linked` after that).",
+        "operationId": "add_staff_availability_v1_venues__venue_id__staff__staff_id__availability_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "staff_id",
+            "required": true,
+            "schema": {
+              "title": "Staff Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaffAvailabilityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Add Staff Availability V1 Venues  Venue Id  Staff  Staff Id  Availability Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Staff Availability"
+      }
+    },
+    "/v1/venues/{venue_id}/staff/{staff_id}/availability/check": {
+      "get": {
+        "description": "Can this person work start to end? `start` and `end` without a zone are the venue's local time. Approved leave\ncounts as unavailable. `reasons` is plain words for the builder to show.",
+        "operationId": "check_availability_v1_venues__venue_id__staff__staff_id__availability_check_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "staff_id",
+            "required": true,
+            "schema": {
+              "title": "Staff Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "start",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "title": "Start",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": true,
+            "schema": {
+              "format": "date-time",
+              "title": "End",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Check Availability V1 Venues  Venue Id  Staff  Staff Id  Availability Check Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Availability"
+      }
+    },
+    "/v1/venues/{venue_id}/staff/{staff_id}/availability/{row_id}/remove": {
+      "post": {
+        "operationId": "remove_staff_availability_v1_venues__venue_id__staff__staff_id__availability__row_id__remove_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "staff_id",
+            "required": true,
+            "schema": {
+              "title": "Staff Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "row_id",
+            "required": true,
+            "schema": {
+              "title": "Row Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Remove Staff Availability V1 Venues  Venue Id  Staff  Staff Id  Availability  Row Id  Remove Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Staff Availability"
       }
     },
     "/v1/venues/{venue_id}/staff/{staff_id}/certificates": {

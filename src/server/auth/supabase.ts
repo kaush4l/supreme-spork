@@ -1,8 +1,9 @@
 import "server-only";
 import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { env } from "../env";
 import { authBaseUrl } from "../env-schema";
+import { clientAddress } from "./client-ip";
 import { cookieName, hardenCookie } from "./cookies";
 
 const production = () => process.env.NODE_ENV === "production";
@@ -13,9 +14,12 @@ const production = () => process.env.NODE_ENV === "production";
  */
 export async function supabaseServer() {
   const store = await cookies();
+  const address = clientAddress(await headers());
   const { AUTH_URL, AUTH_ANON_KEY } = env();
   return createServerClient(authBaseUrl(AUTH_URL), AUTH_ANON_KEY, {
     cookieOptions: { name: cookieName(production()) },
+    // The login service limits sign-in attempts per client address, read from this header (set only by this server).
+    global: { headers: address ? { "X-Minder-Client-IP": address } : {} },
     cookies: {
       getAll: () => store.getAll(),
       setAll: (list) => {

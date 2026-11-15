@@ -18,6 +18,8 @@ const schema = z.object({
   AUTH_ANON_KEY: z.string().min(20),
   /** The public address of this app. */
   SITE_URL: z.url(),
+  /** Cloudflare Turnstile site key (public by design). Unset: no CAPTCHA widget, and the login service must have it off too. */
+  TURNSTILE_SITE_KEY: z.string().min(1).max(100).optional(),
 });
 
 export type Env = z.infer<typeof schema>;
@@ -37,9 +39,12 @@ export function parseEnv(source: Record<string, string | undefined>): Env {
       `Missing or invalid environment variables: ${names.join(", ")}`,
     );
   }
+  const site = new URL(result.data.SITE_URL);
+  const local = site.hostname === "localhost" || site.hostname === "127.0.0.1";
   if (
     source.NODE_ENV === "production" &&
-    !result.data.SITE_URL.startsWith("https://")
+    site.protocol !== "https:" &&
+    !local
   ) {
     throw new Error(
       "Missing or invalid environment variables: SITE_URL (must be https in production)",

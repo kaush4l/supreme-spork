@@ -79,6 +79,108 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/me/availability": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Availability
+     * @description When you can and cannot work, shared with every venue you work at.
+     */
+    get: operations["my_availability_v1_me_availability_get"];
+    put?: never;
+    /** Add My Availability */
+    post: operations["add_my_availability_v1_me_availability_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/me/availability/{row_id}/remove": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Remove My Availability */
+    post: operations["remove_my_availability_v1_me_availability__row_id__remove_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/me/calendar": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Calendar
+     * @description Whether you have a calendar link. The link itself is shown only when you make it.
+     */
+    get: operations["my_calendar_v1_me_calendar_get"];
+    put?: never;
+    /**
+     * Make My Calendar Link
+     * @description Make your calendar link (or replace it: the old one stops working at once). Add `path` to the API's address and subscribe
+     *     Google or Apple Calendar to it. It shows your published shifts at every venue, with no pay. Keep it private.
+     */
+    post: operations["make_my_calendar_link_v1_me_calendar_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/me/calendar/revoke": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Revoke My Calendar Link */
+    post: operations["revoke_my_calendar_link_v1_me_calendar_revoke_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/me/calendar/{token}.ics": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Calendar Feed
+     * @description The person's published shifts at every venue as an iCalendar feed, for Google or Apple Calendar. The secret token in the
+     *     address is the only sign-in (a calendar app cannot send one): make or reset it with POST /v1/me/calendar. An unknown or
+     *     replaced token is a 404. No pay and no notes.
+     */
+    get: operations["calendar_feed_v1_me_calendar__token__ics_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/me/certificates": {
     parameters: {
       query?: never;
@@ -632,6 +734,99 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/change-requests": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Requests
+     * @description Requests you asked for, and those you could decide. `status` is open, approved, rejected, withdrawn, applied,
+     *     failed or stale.
+     */
+    get: operations["list_requests_v1_venues__venue_id__change_requests_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/change-requests/{request_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Request */
+    get: operations["get_request_v1_venues__venue_id__change_requests__request_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/change-requests/{request_id}/approve": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Approve Request
+     * @description Approve and make the change at once. The answer says how it ended: applied, failed (with the reason) or stale
+     *     (the thing changed since it was asked). 403 for someone who does not approve this here and for the asker.
+     */
+    post: operations["approve_request_v1_venues__venue_id__change_requests__request_id__approve_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/change-requests/{request_id}/reject": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Reject Request */
+    post: operations["reject_request_v1_venues__venue_id__change_requests__request_id__reject_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/change-requests/{request_id}/withdraw": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Withdraw Request */
+    post: operations["withdraw_request_v1_venues__venue_id__change_requests__request_id__withdraw_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/dockets/duplicates": {
     parameters: {
       query?: never;
@@ -1172,6 +1367,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/me/blackouts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Blackouts
+     * @description For anyone at the venue: the dates leave cannot be requested, so a screen can say so before asking.
+     */
+    get: operations["my_blackouts_v1_venues__venue_id__me_blackouts_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/me/clock": {
     parameters: {
       query?: never;
@@ -1198,7 +1413,12 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** Clock In */
+    /**
+     * Clock In
+     * @description Clock in. When the venue's method is location, send the phone's `latitude`, `longitude` (and `accuracy_m`): 422
+     *     `outside_location` when too far, `location_needed` when missing. The answer says which method passed and whether it was
+     *     accepted flagged.
+     */
     post: operations["clock_in_v1_venues__venue_id__me_clock_in_post"];
     delete?: never;
     options?: never;
@@ -1217,6 +1437,64 @@ export interface paths {
     put?: never;
     /** Clock Out */
     post: operations["clock_out_v1_venues__venue_id__me_clock_out_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/offers": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Offers
+     * @description Shifts offered that you could work (and your own drops), with your claim if you made one.
+     */
+    get: operations["my_offers_v1_venues__venue_id__me_offers_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/offers/{offer_id}/claim": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Claim Offer
+     * @description Ask for an offered shift. If the venue's rule is first come first served and you are eligible, it is yours now; otherwise
+     *     the manager decides. 422 `not_eligible` says why you cannot take it.
+     */
+    post: operations["claim_offer_v1_venues__venue_id__me_offers__offer_id__claim_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/offers/{offer_id}/withdraw": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Withdraw My Offer */
+    post: operations["withdraw_my_offer_v1_venues__venue_id__me_offers__offer_id__withdraw_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1294,6 +1572,69 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/me/rights": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Rights
+     * @description What the signed-in person may do at this venue: their roles, every right they hold here (the owner's rules
+     *     applied), and their approval limit. The UI draws its navigation and buttons from this; the backend still checks
+     *     every request itself.
+     */
+    get: operations["my_rights_v1_venues__venue_id__me_rights_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/roster/drafts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Drafts
+     * @description Draft rosters waiting for your reply: your shifts with your answers, and the open shifts you may pick up.
+     */
+    get: operations["my_drafts_v1_venues__venue_id__me_roster_drafts_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/roster/drafts/{draft_id}/replies": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reply To Draft
+     * @description Accept or decline a shift of yours, propose another time, or pick up an open shift. You can change your answer until
+     *     the manager decides it. Only you and the manager see it.
+     */
+    post: operations["reply_to_draft_v1_venues__venue_id__me_roster_drafts__draft_id__replies_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/me/shifts": {
     parameters: {
       query?: never;
@@ -1308,6 +1649,27 @@ export interface paths {
     get: operations["my_shifts_v1_venues__venue_id__me_shifts_get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/shifts/{external_id}/drop": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Drop Shift
+     * @description Put one of your published shifts in the pool. Eligible colleagues are told; the manager decides who gets it. The shift stays
+     *     yours until then.
+     */
+    post: operations["drop_shift_v1_venues__venue_id__me_shifts__external_id__drop_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1452,6 +1814,27 @@ export interface paths {
      *     right and staff cannot be given management rights (422). Returns the right as it now stands.
      */
     post: operations["change_permission_v1_venues__venue_id__permissions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/permissions/approval": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Change Approval
+     * @description The owner says who approves a right (off, owner, partner). Only some rights can be set (422 otherwise). Returns
+     *     the right as it now stands, the same shape as an item on the rules page.
+     */
+    post: operations["change_approval_v1_venues__venue_id__permissions_approval_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1893,6 +2276,68 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/roster/blackouts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Blackouts
+     * @description Dates leave cannot be requested (from today on).
+     */
+    get: operations["list_blackouts_v1_venues__venue_id__roster_blackouts_get"];
+    put?: never;
+    /** Add Blackout */
+    post: operations["add_blackout_v1_venues__venue_id__roster_blackouts_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/blackouts/{blackout_id}/remove": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Remove Blackout */
+    post: operations["remove_blackout_v1_venues__venue_id__roster_blackouts__blackout_id__remove_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/clock/location": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Venue Location
+     * @description Where the venue is (for the location clock-in method), or nulls when it has not been set.
+     */
+    get: operations["venue_location_v1_venues__venue_id__roster_clock_location_get"];
+    /**
+     * Set Venue Location
+     * @description Set the venue's location. It is the point the radius rule is measured from (the `roster.rules.change` right).
+     */
+    put: operations["set_venue_location_v1_venues__venue_id__roster_clock_location_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/roster/copy": {
     parameters: {
       query?: never;
@@ -1907,6 +2352,158 @@ export interface paths {
      * @description Copy the week before `week` into `week`, which must be empty.
      */
     post: operations["copy_week_v1_venues__venue_id__roster_copy_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/drafts/{draft_id}/board": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Draft Board
+     * @description Who accepted, declined, proposed another time, wants an open shift, or has not replied.
+     */
+    get: operations["draft_board_v1_venues__venue_id__roster_drafts__draft_id__board_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/drafts/{draft_id}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cancel Draft */
+    post: operations["cancel_draft_v1_venues__venue_id__roster_drafts__draft_id__cancel_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/drafts/{draft_id}/publish": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Publish Draft
+     * @description Publish the draft's week. When the venue's rule says to wait for replies, 409 `replies_outstanding` until they are in.
+     */
+    post: operations["publish_draft_v1_venues__venue_id__roster_drafts__draft_id__publish_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/drafts/{draft_id}/replies/{reply_id}/decide": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Decide Reply
+     * @description Approve or reject a proposed time or a pick-up. Approving edits the shift through the roster builder.
+     */
+    post: operations["decide_reply_v1_venues__venue_id__roster_drafts__draft_id__replies__reply_id__decide_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/groups": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Groups
+     * @description The owner's staff groups in their order, with who is in each. `retired=true` includes retired ones.
+     */
+    get: operations["list_groups_v1_venues__venue_id__roster_groups_get"];
+    put?: never;
+    /** Create Group */
+    post: operations["create_group_v1_venues__venue_id__roster_groups_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/groups/{group_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Change Group
+     * @description Rename, reorder (a smaller position is suggested first) or retire a group.
+     */
+    post: operations["change_group_v1_venues__venue_id__roster_groups__group_id__post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/groups/{group_id}/members": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Add Member */
+    post: operations["add_member_v1_venues__venue_id__roster_groups__group_id__members_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/groups/{group_id}/members/{staff_id}/remove": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Remove Member */
+    post: operations["remove_member_v1_venues__venue_id__roster_groups__group_id__members__staff_id__remove_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1930,6 +2527,63 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/roster/offers": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Offer Board
+     * @description Open offers with who has asked for each.
+     */
+    get: operations["offer_board_v1_venues__venue_id__roster_offers_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/offers/{offer_id}/claims/{claim_id}/decide": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Decide Claim
+     * @description Give the shift to this person (the week is republished if it had no other unpublished edits) or say not this time.
+     */
+    post: operations["decide_claim_v1_venues__venue_id__roster_offers__offer_id__claims__claim_id__decide_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/offers/{offer_id}/withdraw": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Withdraw Offer */
+    post: operations["withdraw_offer_v1_venues__venue_id__roster_offers__offer_id__withdraw_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/roster/publish": {
     parameters: {
       query?: never;
@@ -1941,7 +2595,8 @@ export interface paths {
     put?: never;
     /**
      * Publish
-     * @description Publish the week. Staff then see exactly these shifts. Publishing again with no edits changes nothing.
+     * @description Publish the week. Staff then see exactly these shifts. Publishing again with no edits changes nothing. When the
+     *     owner has made publishing need approval for this caller, a request is stored and the answer is 202 `needs_approval`.
      */
     post: operations["publish_v1_venues__venue_id__roster_publish_post"];
     delete?: never;
@@ -1965,6 +2620,31 @@ export interface paths {
     options?: never;
     head?: never;
     patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/rules": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Rules Page
+     * @description Every roster rule with its label, help, choices, default and current value, grouped for the page. Anyone who may
+     *     build the roster can read it; changing it is the `roster.rules.change` right (owner and partner by default).
+     */
+    get: operations["rules_page_v1_venues__venue_id__roster_rules_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Change Rules
+     * @description Change one or more rules. A bad key or value is a 422 and nothing changes. Returns the whole page as it now stands.
+     */
+    patch: operations["change_rules_v1_venues__venue_id__roster_rules_patch"];
     trace?: never;
   };
   "/v1/venues/{venue_id}/roster/shifts": {
@@ -2021,6 +2701,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/roster/shifts/{external_id}/offer": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Offer Shift
+     * @description Offer an open shift in a published week to the people who could work it. They are told and can ask for it.
+     */
+    post: operations["offer_shift_v1_venues__venue_id__roster_shifts__external_id__offer_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/roster/shifts/{external_id}/open": {
     parameters: {
       query?: never;
@@ -2032,6 +2732,131 @@ export interface paths {
     put?: never;
     /** Open Shift */
     post: operations["open_shift_v1_venues__venue_id__roster_shifts__external_id__open_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/templates": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Templates */
+    get: operations["list_templates_v1_venues__venue_id__roster_templates_get"];
+    put?: never;
+    /**
+     * Create Template
+     * @description A template for 1, 7 or 14 days. Each slot is a day, a position, a start and end time and how many people.
+     */
+    post: operations["create_template_v1_venues__venue_id__roster_templates_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/templates/{template_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Template */
+    get: operations["get_template_v1_venues__venue_id__roster_templates__template_id__get"];
+    put?: never;
+    /**
+     * Change Template
+     * @description Rename, replace the slots, or retire. The length cannot change: make a new template.
+     */
+    post: operations["change_template_v1_venues__venue_id__roster_templates__template_id__post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/templates/{template_id}/apply": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Apply Template
+     * @description Make the template's open shifts from a start date (a Monday for a week or two weeks). Shifts already there stay.
+     *     Send an Idempotency-Key: applying twice makes the shifts twice.
+     */
+    post: operations["apply_template_v1_venues__venue_id__roster_templates__template_id__apply_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/weeks/{week}/send": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Send Week
+     * @description Send the week. `direct` publishes it now (staff are told); `draft` sends it for staff to reply to first. The default
+     *     is the venue's rule. Sending a draft needs the build right; publishing straight away follows the publish right and any
+     *     approval the owner set.
+     */
+    post: operations["send_week_v1_venues__venue_id__roster_weeks__week__send_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/weeks/{week}/suggestions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Week Suggestions
+     * @description For each open shift in the week, who could fill it, best first, with the reasons; and who was left out and why.
+     */
+    get: operations["week_suggestions_v1_venues__venue_id__roster_weeks__week__suggestions_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/weeks/{week}/suggestions/accept": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Accept Suggestions
+     * @description Fill the shifts you chose with the people you chose. Ones that no longer work are returned in `skipped`.
+     */
+    post: operations["accept_suggestions_v1_venues__venue_id__roster_weeks__week__suggestions_accept_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -2254,6 +3079,69 @@ export interface paths {
     put?: never;
     /** Change Staff */
     post: operations["change_staff_v1_venues__venue_id__staff__staff_id__post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/staff/{staff_id}/availability": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Staff Availability
+     * @description Who can work when. `owner` says whose it is: the person's own (they have signed in) or this venue's entry.
+     */
+    get: operations["staff_availability_v1_venues__venue_id__staff__staff_id__availability_get"];
+    put?: never;
+    /**
+     * Add Staff Availability
+     * @description For a person who has not signed in. Once they do, it is copied to their own availability and theirs wins (409
+     *     `person_linked` after that).
+     */
+    post: operations["add_staff_availability_v1_venues__venue_id__staff__staff_id__availability_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/staff/{staff_id}/availability/check": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Check Availability
+     * @description Can this person work start to end? `start` and `end` without a zone are the venue's local time. Approved leave
+     *     counts as unavailable. `reasons` is plain words for the builder to show.
+     */
+    get: operations["check_availability_v1_venues__venue_id__staff__staff_id__availability_check_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/staff/{staff_id}/availability/{row_id}/remove": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Remove Staff Availability */
+    post: operations["remove_staff_availability_v1_venues__venue_id__staff__staff_id__availability__row_id__remove_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -3383,6 +4271,48 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /**
+     * ApprovalChange
+     * @description Who approves one right: off (act directly), owner, or partner (the partner or the owner).
+     */
+    ApprovalChange: {
+      /** Approval */
+      approval: string;
+      /** Capability */
+      capability: string;
+    };
+    /** Assignment */
+    Assignment: {
+      /** External Id */
+      external_id: string;
+      /** Staff Id */
+      staff_id: string;
+    };
+    /**
+     * AvailabilityIn
+     * @description One availability entry: weekly (weekday 0 to 6 and a time window) or once (a first and last day).
+     */
+    AvailabilityIn: {
+      /** Available */
+      available: boolean;
+      /** End Date */
+      end_date?: string | null;
+      /** From Time */
+      from_time?: string | null;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "weekly" | "once";
+      /** Note */
+      note?: string | null;
+      /** Start Date */
+      start_date?: string | null;
+      /** To Time */
+      to_time?: string | null;
+      /** Weekday */
+      weekday?: number | null;
+    };
     /** BankFileNote */
     BankFileNote: {
       /** Note */
@@ -3472,6 +4402,21 @@ export interface components {
       /** Transaction Id */
       transaction_id?: string | null;
     };
+    /** BlackoutIn */
+    BlackoutIn: {
+      /**
+       * End Date
+       * Format: date
+       */
+      end_date: string;
+      /** Reason */
+      reason: string;
+      /**
+       * Start Date
+       * Format: date
+       */
+      start_date: string;
+    };
     /** Body_import_recipe_file_v1_venues__venue_id__recipes_import_file_post */
     Body_import_recipe_file_v1_venues__venue_id__recipes_import_file_post: {
       /** File */
@@ -3553,6 +4498,14 @@ export interface components {
       label: string;
     };
     /**
+     * ChangeDecision
+     * @description An optional note when approving; the reason when rejecting.
+     */
+    ChangeDecision: {
+      /** Note */
+      note?: string | null;
+    };
+    /**
      * ChangeIn
      * @description Only the fields sent are changed; send null to clear one. `lines` is keyed by line number.
      */
@@ -3578,6 +4531,18 @@ export interface components {
       supplier?: string | null;
       /** Total Cents */
       total_cents?: number | null;
+    };
+    /**
+     * ClockIn
+     * @description What the device sends. Only the location method needs it: where the phone is, and how accurate that is.
+     */
+    ClockIn: {
+      /** Accuracy M */
+      accuracy_m?: number | null;
+      /** Latitude */
+      latitude?: number | null;
+      /** Longitude */
+      longitude?: number | null;
     };
     /** ClockOut */
     ClockOut: {
@@ -3608,6 +4573,13 @@ export interface components {
     };
     /** Decision */
     Decision: {
+      /** Note */
+      note?: string | null;
+    };
+    /** DraftDecision */
+    DraftDecision: {
+      /** Approve */
+      approve: boolean;
       /** Note */
       note?: string | null;
     };
@@ -3704,6 +4676,27 @@ export interface components {
     ExpiryItemRemoveIn: {
       /** Note */
       note?: string | null;
+    };
+    /** GroupChange */
+    GroupChange: {
+      /** Active */
+      active?: boolean | null;
+      /** Name */
+      name?: string | null;
+      /** Position */
+      position?: number | null;
+    };
+    /** GroupIn */
+    GroupIn: {
+      /** Name */
+      name: string;
+      /** Position */
+      position?: number | null;
+    };
+    /** GroupMemberIn */
+    GroupMemberIn: {
+      /** Staff Id */
+      staff_id: string;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -3945,6 +4938,13 @@ export interface components {
       /** Note */
       note?: string | null;
     };
+    /** OfferDecision */
+    OfferDecision: {
+      /** Approve */
+      approve: boolean;
+      /** Note */
+      note?: string | null;
+    };
     /**
      * PermissionChange
      * @description Give a role a right (true), take it away (false), or go back to the default (null).
@@ -3991,6 +4991,8 @@ export interface components {
       default_rate_cents?: number | null;
       /** Name */
       name?: string | null;
+      /** Required Certificates */
+      required_certificates?: string[] | null;
     };
     /** PositionIn */
     PositionIn: {
@@ -4001,6 +5003,12 @@ export interface components {
       default_rate_cents: number;
       /** Name */
       name: string;
+      /**
+       * Required Certificates
+       * @description Certificates a person needs to work this position (rsa, food_safety, first_aid, other).
+       * @default []
+       */
+      required_certificates: string[];
     };
     /** RecipeDishIn */
     RecipeDishIn: {
@@ -4053,6 +5061,22 @@ export interface components {
        */
       reason: string;
     };
+    /** ReplyIn */
+    ReplyIn: {
+      /** End */
+      end?: string | null;
+      /** External Id */
+      external_id: string;
+      /** Reason */
+      reason?: string | null;
+      /**
+       * Response
+       * @enum {string}
+       */
+      response: "accept" | "decline" | "propose" | "pickup";
+      /** Start */
+      start?: string | null;
+    };
     /** ReportNote */
     ReportNote: {
       /** Note */
@@ -4072,6 +5096,64 @@ export interface components {
     RosterReason: {
       /** Reason */
       reason?: string | null;
+    };
+    /**
+     * RosterRulesChange
+     * @description `rules` maps a rule key to its new setting; null puts that rule back to its default.
+     */
+    RosterRulesChange: {
+      /** Rules */
+      rules: {
+        [key: string]: number | string | boolean | null;
+      };
+    };
+    /** RosterTemplateApply */
+    RosterTemplateApply: {
+      /**
+       * Start
+       * Format: date
+       */
+      start: string;
+    };
+    /** RosterTemplateChange */
+    RosterTemplateChange: {
+      /** Active */
+      active?: boolean | null;
+      /** Name */
+      name?: string | null;
+      /** Slots */
+      slots?: components["schemas"]["RosterTemplateSlotIn"][] | null;
+    };
+    /** RosterTemplateIn */
+    RosterTemplateIn: {
+      /** Length Days */
+      length_days: number;
+      /** Name */
+      name: string;
+      /**
+       * Slots
+       * @default []
+       */
+      slots: components["schemas"]["RosterTemplateSlotIn"][];
+    };
+    /**
+     * RosterTemplateSlotIn
+     * @description Day 0 is the first day of the template. `end` at or before `start` means the shift ends the next morning.
+     */
+    RosterTemplateSlotIn: {
+      /**
+       * Count
+       * @default 1
+       */
+      count: number;
+      /** Day */
+      day: number;
+      /** End */
+      end: string;
+      /** Position */
+      position: string;
+      /** Start */
+      start: string;
     };
     /** RuleChange */
     RuleChange: {
@@ -4111,6 +5193,16 @@ export interface components {
     SaveAsTemplateIn: {
       /** Name */
       name?: string | null;
+    };
+    /**
+     * SendIn
+     * @description `mode` defaults to the venue's rule (`send_mode`). `reply_hours` overrides the draft reply time for this draft (24, 48, 72).
+     */
+    SendIn: {
+      /** Mode */
+      mode?: ("direct" | "draft") | null;
+      /** Reply Hours */
+      reply_hours?: (24 | 48 | 72) | null;
     };
     /**
      * SettingsChange
@@ -4173,6 +5265,28 @@ export interface components {
        */
       start: string;
     };
+    /**
+     * StaffAvailabilityIn
+     * @description Availability a manager enters for a person who has not signed in yet. Same shape as the person's own.
+     */
+    StaffAvailabilityIn: {
+      /** Available */
+      available: boolean;
+      /** End Date */
+      end_date?: string | null;
+      /** From Time */
+      from_time?: string | null;
+      /** Kind */
+      kind: string;
+      /** Note */
+      note?: string | null;
+      /** Start Date */
+      start_date?: string | null;
+      /** To Time */
+      to_time?: string | null;
+      /** Weekday */
+      weekday?: number | null;
+    };
     /** StaffCertificateIn */
     StaffCertificateIn: {
       /**
@@ -4224,6 +5338,11 @@ export interface components {
       position_names: string[];
       /** Started On */
       started_on?: string | null;
+    };
+    /** SuggestionsAccept */
+    SuggestionsAccept: {
+      /** Assignments */
+      assignments: components["schemas"]["Assignment"][];
     };
     /**
      * SupplierChange
@@ -4326,6 +5445,13 @@ export interface components {
        * @default 04:00
        */
       trading_day_start: string;
+    };
+    /** VenueLocationIn */
+    VenueLocationIn: {
+      /** Latitude */
+      latitude: number;
+      /** Longitude */
+      longitude: number;
     };
     /**
      * WasteChangeIn
@@ -4501,6 +5627,242 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_availability_v1_me_availability_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_my_availability_v1_me_availability_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AvailabilityIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_my_availability_v1_me_availability__row_id__remove_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        row_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_calendar_v1_me_calendar_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  make_my_calendar_link_v1_me_calendar_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  revoke_my_calendar_link_v1_me_calendar_revoke_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  calendar_feed_v1_me_calendar__token__ics_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        token: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */
@@ -5658,6 +7020,203 @@ export interface operations {
         "application/json": components["schemas"]["CategoryChange"];
       };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_requests_v1_venues__venue_id__change_requests_get: {
+    parameters: {
+      query?: {
+        status?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_request_v1_venues__venue_id__change_requests__request_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        request_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  approve_request_v1_venues__venue_id__change_requests__request_id__approve_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        request_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["ChangeDecision"] | null;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reject_request_v1_venues__venue_id__change_requests__request_id__reject_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        request_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["ChangeDecision"] | null;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  withdraw_request_v1_venues__venue_id__change_requests__request_id__withdraw_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        request_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description Successful Response */
       200: {
@@ -6901,6 +8460,42 @@ export interface operations {
       };
     };
   };
+  my_blackouts_v1_venues__venue_id__me_blackouts_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   my_clock_v1_venues__venue_id__me_clock_get: {
     parameters: {
       query?: never;
@@ -6950,7 +8545,11 @@ export interface operations {
       };
       cookie?: never;
     };
-    requestBody?: never;
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["ClockIn"] | null;
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -6992,6 +8591,117 @@ export interface operations {
         "application/json": components["schemas"]["ClockOut"] | null;
       };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_offers_v1_venues__venue_id__me_offers_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  claim_offer_v1_venues__venue_id__me_offers__offer_id__claim_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        offer_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  withdraw_my_offer_v1_venues__venue_id__me_offers__offer_id__withdraw_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        offer_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description Successful Response */
       200: {
@@ -7169,6 +8879,120 @@ export interface operations {
       };
     };
   };
+  my_rights_v1_venues__venue_id__me_rights_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_drafts_v1_venues__venue_id__me_roster_drafts_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reply_to_draft_v1_venues__venue_id__me_roster_drafts__draft_id__replies_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        draft_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ReplyIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   my_shifts_v1_venues__venue_id__me_shifts_get: {
     parameters: {
       query?: {
@@ -7195,6 +9019,44 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  drop_shift_v1_venues__venue_id__me_shifts__external_id__drop_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        external_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
         };
       };
       /** @description Validation Error */
@@ -7493,6 +9355,47 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["PermissionChange"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  change_approval_v1_venues__venue_id__permissions_approval_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ApprovalChange"];
       };
     };
     responses: {
@@ -8444,6 +10347,196 @@ export interface operations {
       };
     };
   };
+  list_blackouts_v1_venues__venue_id__roster_blackouts_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_blackout_v1_venues__venue_id__roster_blackouts_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["BlackoutIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_blackout_v1_venues__venue_id__roster_blackouts__blackout_id__remove_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        blackout_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  venue_location_v1_venues__venue_id__roster_clock_location_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  set_venue_location_v1_venues__venue_id__roster_clock_location_put: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["VenueLocationIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   copy_week_v1_venues__venue_id__roster_copy_post: {
     parameters: {
       query?: never;
@@ -8462,6 +10555,358 @@ export interface operations {
         "application/json": components["schemas"]["WeekIn"];
       };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  draft_board_v1_venues__venue_id__roster_drafts__draft_id__board_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        draft_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cancel_draft_v1_venues__venue_id__roster_drafts__draft_id__cancel_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        draft_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  publish_draft_v1_venues__venue_id__roster_drafts__draft_id__publish_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        draft_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  decide_reply_v1_venues__venue_id__roster_drafts__draft_id__replies__reply_id__decide_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        draft_id: string;
+        reply_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["DraftDecision"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_groups_v1_venues__venue_id__roster_groups_get: {
+    parameters: {
+      query?: {
+        retired?: boolean;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_group_v1_venues__venue_id__roster_groups_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GroupIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  change_group_v1_venues__venue_id__roster_groups__group_id__post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        group_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GroupChange"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_member_v1_venues__venue_id__roster_groups__group_id__members_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        group_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["GroupMemberIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_member_v1_venues__venue_id__roster_groups__group_id__members__staff_id__remove_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        group_id: string;
+        staff_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description Successful Response */
       200: {
@@ -8510,6 +10955,122 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  offer_board_v1_venues__venue_id__roster_offers_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  decide_claim_v1_venues__venue_id__roster_offers__offer_id__claims__claim_id__decide_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        offer_id: string;
+        claim_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OfferDecision"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  withdraw_offer_v1_venues__venue_id__roster_offers__offer_id__withdraw_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        offer_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
         };
       };
       /** @description Validation Error */
@@ -8579,6 +11140,83 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  rules_page_v1_venues__venue_id__roster_rules_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  change_rules_v1_venues__venue_id__roster_rules_patch: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RosterRulesChange"];
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -8721,6 +11359,44 @@ export interface operations {
       };
     };
   };
+  offer_shift_v1_venues__venue_id__roster_shifts__external_id__offer_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        external_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   open_shift_v1_venues__venue_id__roster_shifts__external_id__open_post: {
     parameters: {
       query?: never;
@@ -8735,6 +11411,324 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_templates_v1_venues__venue_id__roster_templates_get: {
+    parameters: {
+      query?: {
+        retired?: boolean;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_template_v1_venues__venue_id__roster_templates_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RosterTemplateIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_template_v1_venues__venue_id__roster_templates__template_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        template_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  change_template_v1_venues__venue_id__roster_templates__template_id__post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        template_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RosterTemplateChange"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  apply_template_v1_venues__venue_id__roster_templates__template_id__apply_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        template_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["RosterTemplateApply"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  send_week_v1_venues__venue_id__roster_weeks__week__send_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        week: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["SendIn"] | null;
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  week_suggestions_v1_venues__venue_id__roster_weeks__week__suggestions_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        week: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  accept_suggestions_v1_venues__venue_id__roster_weeks__week__suggestions_accept_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        week: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SuggestionsAccept"];
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -9288,6 +12282,162 @@ export interface operations {
         "application/json": components["schemas"]["StaffChange"];
       };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  staff_availability_v1_venues__venue_id__staff__staff_id__availability_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        staff_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_staff_availability_v1_venues__venue_id__staff__staff_id__availability_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        staff_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StaffAvailabilityIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  check_availability_v1_venues__venue_id__staff__staff_id__availability_check_get: {
+    parameters: {
+      query: {
+        start: string;
+        end: string;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        staff_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_staff_availability_v1_venues__venue_id__staff__staff_id__availability__row_id__remove_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        staff_id: string;
+        row_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description Successful Response */
       200: {

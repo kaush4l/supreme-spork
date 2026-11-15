@@ -49,6 +49,21 @@ describe("parseEnv", () => {
         NODE_ENV: "development",
       }).SITE_URL,
     ).toBe("http://localhost:3000");
+    // a production build run on this machine (the browser tests) may use http://localhost; no real site can
+    expect(
+      parseEnv({
+        ...good,
+        SITE_URL: "http://localhost:3111",
+        NODE_ENV: "production",
+      }).SITE_URL,
+    ).toBe("http://localhost:3111");
+    expect(() =>
+      parseEnv({
+        ...good,
+        SITE_URL: "http://localhost.evil.example.com",
+        NODE_ENV: "production",
+      }),
+    ).toThrow(/https/);
   });
 });
 

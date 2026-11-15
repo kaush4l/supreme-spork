@@ -38,6 +38,17 @@ describe("buildCsp", () => {
     expect(dev).not.toContain("upgrade-insecure-requests");
   });
 
+  test("no frame is allowed unless a frame source is configured", () => {
+    expect(directive(csp, "frame-src")).toBe("'none'");
+    const withCaptcha = buildCsp("n", {
+      dev: false,
+      frameSources: ["https://challenges.cloudflare.com"],
+    });
+    expect(directive(withCaptcha, "frame-src")).toBe(
+      "https://challenges.cloudflare.com",
+    );
+  });
+
   test("photo sources are added to img-src and nothing else", () => {
     const withStorage = buildCsp("n", {
       dev: false,
