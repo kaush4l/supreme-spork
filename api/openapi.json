@@ -14,7 +14,10 @@
             "type": "string"
           }
         },
-        "required": ["capability", "approval"],
+        "required": [
+          "capability",
+          "approval"
+        ],
         "title": "ApprovalChange",
         "type": "object"
       },
@@ -30,7 +33,10 @@
             "type": "string"
           }
         },
-        "required": ["external_id", "staff_id"],
+        "required": [
+          "external_id",
+          "staff_id"
+        ],
         "title": "Assignment",
         "type": "object"
       },
@@ -67,7 +73,10 @@
             "title": "From Time"
           },
           "kind": {
-            "enum": ["weekly", "once"],
+            "enum": [
+              "weekly",
+              "once"
+            ],
             "title": "Kind",
             "type": "string"
           },
@@ -121,7 +130,10 @@
             "title": "Weekday"
           }
         },
-        "required": ["kind", "available"],
+        "required": [
+          "kind",
+          "available"
+        ],
         "title": "AvailabilityIn",
         "type": "object"
       },
@@ -211,7 +223,12 @@
             "type": "integer"
           },
           "cadence": {
-            "enum": ["weekly", "fortnightly", "monthly", "quarterly"],
+            "enum": [
+              "weekly",
+              "fortnightly",
+              "monthly",
+              "quarterly"
+            ],
             "title": "Cadence",
             "type": "string"
           },
@@ -250,7 +267,13 @@
             "type": "string"
           }
         },
-        "required": ["label", "kind", "amount_cents", "cadence", "next_due"],
+        "required": [
+          "label",
+          "kind",
+          "amount_cents",
+          "cadence",
+          "next_due"
+        ],
         "title": "BillCreateRequest",
         "type": "object"
       },
@@ -273,7 +296,9 @@
             "title": "Due On"
           }
         },
-        "required": ["document_id"],
+        "required": [
+          "document_id"
+        ],
         "title": "BillDocketLink",
         "type": "object"
       },
@@ -293,7 +318,12 @@
           "cadence": {
             "anyOf": [
               {
-                "enum": ["weekly", "fortnightly", "monthly", "quarterly"],
+                "enum": [
+                  "weekly",
+                  "fortnightly",
+                  "monthly",
+                  "quarterly"
+                ],
                 "type": "string"
               },
               {
@@ -348,7 +378,11 @@
             "title": "Note"
           },
           "status": {
-            "enum": ["paid", "not_due", "open"],
+            "enum": [
+              "paid",
+              "not_due",
+              "open"
+            ],
             "title": "Status",
             "type": "string"
           },
@@ -364,7 +398,9 @@
             "title": "Transaction Id"
           }
         },
-        "required": ["status"],
+        "required": [
+          "status"
+        ],
         "title": "BillMarkRequest",
         "type": "object"
       },
@@ -388,7 +424,11 @@
             "type": "string"
           }
         },
-        "required": ["start_date", "end_date", "reason"],
+        "required": [
+          "start_date",
+          "end_date",
+          "reason"
+        ],
         "title": "BlackoutIn",
         "type": "object"
       },
@@ -400,7 +440,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_import_recipe_file_v1_venues__venue_id__recipes_import_file_post",
         "type": "object"
       },
@@ -443,7 +485,10 @@
             "type": "string"
           }
         },
-        "required": ["file", "venue_id"],
+        "required": [
+          "file",
+          "venue_id"
+        ],
         "title": "Body_ingest_ingest_post",
         "type": "object"
       },
@@ -455,7 +500,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_manager_photo_v1_venues__venue_id__workflows_lists__list_id__photo_post",
         "type": "object"
       },
@@ -467,7 +514,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_my_photo_v1_venues__venue_id__workflows_me_lists__list_id__photo_post",
         "type": "object"
       },
@@ -479,7 +528,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_upload_bank_file_v1_venues__venue_id__bank_files_upload_post",
         "type": "object"
       },
@@ -491,7 +542,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_upload_expiry_file_v1_venues__venue_id__expiry_items_files_post",
         "type": "object"
       },
@@ -508,7 +561,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_upload_report_v1_venues__venue_id__sales_reports_upload_post",
         "type": "object"
       },
@@ -520,7 +575,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_upload_roster_v1_venues__venue_id__roster_files_upload_post",
         "type": "object"
       },
@@ -532,7 +589,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_upload_v1_venues__venue_id__dockets_upload_post",
         "type": "object"
       },
@@ -544,7 +603,9 @@
             "type": "string"
           }
         },
-        "required": ["file"],
+        "required": [
+          "file"
+        ],
         "title": "Body_waste_photo_v1_venues__venue_id__waste_photo_post",
         "type": "object"
       },
@@ -594,7 +655,9 @@
             "type": "string"
           }
         },
-        "required": ["label"],
+        "required": [
+          "label"
+        ],
         "title": "CategoryCreate",
         "type": "object"
       },
@@ -820,7 +883,9 @@
             "title": "Opens"
           }
         },
-        "required": ["dow"],
+        "required": [
+          "dow"
+        ],
         "title": "DayIn",
         "type": "object"
       },
@@ -862,7 +927,9 @@
             "title": "Note"
           }
         },
-        "required": ["approve"],
+        "required": [
+          "approve"
+        ],
         "title": "DraftDecision",
         "type": "object"
       },
@@ -899,7 +966,9 @@
             "type": "string"
           }
         },
-        "required": ["note"],
+        "required": [
+          "note"
+        ],
         "title": "EntryCorrection",
         "type": "object"
       },
@@ -918,7 +987,10 @@
             "type": "integer"
           },
           "kind": {
-            "enum": ["in", "out"],
+            "enum": [
+              "in",
+              "out"
+            ],
             "title": "Kind",
             "type": "string"
           },
@@ -932,7 +1004,12 @@
             "type": "string"
           }
         },
-        "required": ["staff_id", "kind", "at", "note"],
+        "required": [
+          "staff_id",
+          "kind",
+          "at",
+          "note"
+        ],
         "title": "EntryIn",
         "type": "object"
       },
@@ -1093,7 +1170,11 @@
             "title": "Warn Days"
           }
         },
-        "required": ["kind", "title", "expires_on"],
+        "required": [
+          "kind",
+          "title",
+          "expires_on"
+        ],
         "title": "ExpiryItemIn",
         "type": "object"
       },
@@ -1181,7 +1262,9 @@
             "title": "Position"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "GroupIn",
         "type": "object"
       },
@@ -1193,7 +1276,9 @@
             "type": "string"
           }
         },
-        "required": ["staff_id"],
+        "required": [
+          "staff_id"
+        ],
         "title": "GroupMemberIn",
         "type": "object"
       },
@@ -1222,7 +1307,10 @@
             "type": "string"
           }
         },
-        "required": ["date", "name"],
+        "required": [
+          "date",
+          "name"
+        ],
         "title": "HolidayIn",
         "type": "object"
       },
@@ -1236,7 +1324,9 @@
             "type": "array"
           }
         },
-        "required": ["days"],
+        "required": [
+          "days"
+        ],
         "title": "HoursIn",
         "type": "object"
       },
@@ -1260,7 +1350,9 @@
             "type": "string"
           }
         },
-        "required": ["email"],
+        "required": [
+          "email"
+        ],
         "title": "InviteIn",
         "type": "object"
       },
@@ -1272,7 +1364,9 @@
             "type": "string"
           }
         },
-        "required": ["week"],
+        "required": [
+          "week"
+        ],
         "title": "IssueIn",
         "type": "object"
       },
@@ -1420,7 +1514,10 @@
             "type": "boolean"
           }
         },
-        "required": ["label", "kind"],
+        "required": [
+          "label",
+          "kind"
+        ],
         "title": "ItemIn",
         "type": "object"
       },
@@ -1523,7 +1620,10 @@
             "type": "string"
           }
         },
-        "required": ["start_date", "end_date"],
+        "required": [
+          "start_date",
+          "end_date"
+        ],
         "title": "LeaveIn",
         "type": "object"
       },
@@ -1842,7 +1942,10 @@
             "type": "boolean"
           }
         },
-        "required": ["label", "kind"],
+        "required": [
+          "label",
+          "kind"
+        ],
         "title": "ListItemAdd",
         "type": "object"
       },
@@ -1971,7 +2074,9 @@
             "type": "string"
           }
         },
-        "required": ["into_item_id"],
+        "required": [
+          "into_item_id"
+        ],
         "title": "MenuItemMergeIn",
         "type": "object"
       },
@@ -2012,7 +2117,9 @@
             "title": "Note"
           }
         },
-        "required": ["approve"],
+        "required": [
+          "approve"
+        ],
         "title": "OfferDecision",
         "type": "object"
       },
@@ -2040,7 +2147,11 @@
             "type": "string"
           }
         },
-        "required": ["capability", "role", "allowed"],
+        "required": [
+          "capability",
+          "role",
+          "allowed"
+        ],
         "title": "PermissionChange",
         "type": "object"
       },
@@ -2065,7 +2176,9 @@
             "title": "Number"
           }
         },
-        "required": ["expires_on"],
+        "required": [
+          "expires_on"
+        ],
         "title": "PersonCertificateIn",
         "type": "object"
       },
@@ -2220,7 +2333,9 @@
             "type": "array"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "PositionIn",
         "type": "object"
       },
@@ -2250,7 +2365,10 @@
             "type": "array"
           }
         },
-        "required": ["name", "recipe"],
+        "required": [
+          "name",
+          "recipe"
+        ],
         "title": "RecipeDishIn",
         "type": "object"
       },
@@ -2291,7 +2409,10 @@
             "title": "Usable Pct"
           }
         },
-        "required": ["qty_per_serve", "unit"],
+        "required": [
+          "qty_per_serve",
+          "unit"
+        ],
         "title": "RecipeLineEditIn",
         "type": "object"
       },
@@ -2320,7 +2441,11 @@
             "type": "string"
           }
         },
-        "required": ["ingredient", "qty_per_serve", "unit"],
+        "required": [
+          "ingredient",
+          "qty_per_serve",
+          "unit"
+        ],
         "title": "RecipeLineIn",
         "type": "object"
       },
@@ -2335,7 +2460,9 @@
             "type": "array"
           }
         },
-        "required": ["menu"],
+        "required": [
+          "menu"
+        ],
         "title": "RecipeTemplateIn",
         "type": "object"
       },
@@ -2356,7 +2483,9 @@
             "title": "Portions"
           }
         },
-        "required": ["portions"],
+        "required": [
+          "portions"
+        ],
         "title": "RecipeYieldIn",
         "type": "object"
       },
@@ -2403,7 +2532,12 @@
             "title": "Reason"
           },
           "response": {
-            "enum": ["accept", "decline", "propose", "pickup"],
+            "enum": [
+              "accept",
+              "decline",
+              "propose",
+              "pickup"
+            ],
             "title": "Response",
             "type": "string"
           },
@@ -2420,7 +2554,10 @@
             "title": "Start"
           }
         },
-        "required": ["external_id", "response"],
+        "required": [
+          "external_id",
+          "response"
+        ],
         "title": "ReplyIn",
         "type": "object"
       },
@@ -2517,7 +2654,9 @@
             "type": "object"
           }
         },
-        "required": ["rules"],
+        "required": [
+          "rules"
+        ],
         "title": "RosterRulesChange",
         "type": "object"
       },
@@ -2530,7 +2669,9 @@
             "type": "string"
           }
         },
-        "required": ["start"],
+        "required": [
+          "start"
+        ],
         "title": "RosterTemplateApply",
         "type": "object"
       },
@@ -2601,7 +2742,10 @@
             "type": "array"
           }
         },
-        "required": ["name", "length_days"],
+        "required": [
+          "name",
+          "length_days"
+        ],
         "title": "RosterTemplateIn",
         "type": "object"
       },
@@ -2636,7 +2780,12 @@
             "type": "string"
           }
         },
-        "required": ["day", "position", "start", "end"],
+        "required": [
+          "day",
+          "position",
+          "start",
+          "end"
+        ],
         "title": "RosterTemplateSlotIn",
         "type": "object"
       },
@@ -2786,7 +2935,11 @@
             "type": "string"
           }
         },
-        "required": ["template_key", "target_kind", "timing_kind"],
+        "required": [
+          "template_key",
+          "target_kind",
+          "timing_kind"
+        ],
         "title": "RuleIn",
         "type": "object"
       },
@@ -2816,7 +2969,10 @@
           "mode": {
             "anyOf": [
               {
-                "enum": ["direct", "draft"],
+                "enum": [
+                  "direct",
+                  "draft"
+                ],
                 "type": "string"
               },
               {
@@ -2828,7 +2984,11 @@
           "reply_hours": {
             "anyOf": [
               {
-                "enum": [24, 48, 72],
+                "enum": [
+                  24,
+                  48,
+                  72
+                ],
                 "type": "integer"
               },
               {
@@ -3036,7 +3196,11 @@
             "type": "string"
           }
         },
-        "required": ["position", "start", "end"],
+        "required": [
+          "position",
+          "start",
+          "end"
+        ],
         "title": "ShiftIn",
         "type": "object"
       },
@@ -3126,7 +3290,10 @@
             "title": "Weekday"
           }
         },
-        "required": ["kind", "available"],
+        "required": [
+          "kind",
+          "available"
+        ],
         "title": "StaffAvailabilityIn",
         "type": "object"
       },
@@ -3151,7 +3318,9 @@
             "title": "Number"
           }
         },
-        "required": ["expires_on"],
+        "required": [
+          "expires_on"
+        ],
         "title": "StaffCertificateIn",
         "type": "object"
       },
@@ -3341,7 +3510,9 @@
             "title": "Started On"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "StaffIn",
         "type": "object"
       },
@@ -3358,7 +3529,9 @@
             "type": "array"
           }
         },
-        "required": ["assignments"],
+        "required": [
+          "assignments"
+        ],
         "title": "SuggestionsAccept",
         "type": "object"
       },
@@ -3470,7 +3643,9 @@
             "title": "Payment Terms Days"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "SupplierIn",
         "type": "object"
       },
@@ -3497,7 +3672,10 @@
             "type": "string"
           }
         },
-        "required": ["shift_external_id", "with_staff_id"],
+        "required": [
+          "shift_external_id",
+          "with_staff_id"
+        ],
         "title": "SwapIn",
         "type": "object"
       },
@@ -3561,7 +3739,9 @@
             "type": "string"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "TemplateIn",
         "type": "object"
       },
@@ -3597,7 +3777,11 @@
             "type": "string"
           }
         },
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError",
         "type": "object"
       },
@@ -3628,7 +3812,9 @@
             "type": "string"
           }
         },
-        "required": ["name"],
+        "required": [
+          "name"
+        ],
         "title": "VenueIn",
         "type": "object"
       },
@@ -3647,7 +3833,10 @@
             "type": "number"
           }
         },
-        "required": ["latitude", "longitude"],
+        "required": [
+          "latitude",
+          "longitude"
+        ],
         "title": "VenueLocationIn",
         "type": "object"
       },
@@ -3800,7 +3989,12 @@
             "type": "string"
           }
         },
-        "required": ["item_id", "qty", "unit", "reason"],
+        "required": [
+          "item_id",
+          "qty",
+          "unit",
+          "reason"
+        ],
         "title": "WasteIn",
         "type": "object"
       },
@@ -3829,7 +4023,9 @@
             "type": "string"
           }
         },
-        "required": ["week"],
+        "required": [
+          "week"
+        ],
         "title": "WeekIn",
         "type": "object"
       }
@@ -4428,7 +4624,12 @@
             "name": "kind",
             "required": true,
             "schema": {
-              "enum": ["rsa", "food_safety", "first_aid", "other"],
+              "enum": [
+                "rsa",
+                "food_safety",
+                "first_aid",
+                "other"
+              ],
               "title": "Kind",
               "type": "string"
             }
@@ -4512,7 +4713,12 @@
             "name": "kind",
             "required": true,
             "schema": {
-              "enum": ["rsa", "food_safety", "first_aid", "other"],
+              "enum": [
+                "rsa",
+                "food_safety",
+                "first_aid",
+                "other"
+              ],
               "title": "Kind",
               "type": "string"
             }
@@ -10996,6 +11202,191 @@
         "summary": "Clock Out"
       }
     },
+    "/v1/venues/{venue_id}/me/colleagues": {
+      "get": {
+        "description": "Active team members to pick from (for handing over a shift): id, name and positions only, never pay or contact.",
+        "operationId": "my_colleagues_v1_venues__venue_id__me_colleagues_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response My Colleagues V1 Venues  Venue Id  Me Colleagues Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Colleagues"
+      }
+    },
+    "/v1/venues/{venue_id}/me/hours": {
+      "get": {
+        "description": "The caller's own worked hours and an estimate of earnings (hours times their own rate). Defaults to the last 14 days.",
+        "operationId": "my_hours_v1_venues__venue_id__me_hours_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response My Hours V1 Venues  Venue Id  Me Hours Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Hours"
+      }
+    },
     "/v1/venues/{venue_id}/me/offers": {
       "get": {
         "description": "Shifts offered that you could work (and your own drops), with your claim if you made one.",
@@ -11170,6 +11561,89 @@
           }
         },
         "summary": "Claim Offer"
+      }
+    },
+    "/v1/venues/{venue_id}/me/offers/{offer_id}/claim/withdraw": {
+      "post": {
+        "description": "Take back your own request for an offered shift, while nobody has decided it. 404 `no_claim` when you made none.",
+        "operationId": "withdraw_my_claim_v1_venues__venue_id__me_offers__offer_id__claim_withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Withdraw My Claim V1 Venues  Venue Id  Me Offers  Offer Id  Claim Withdraw Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw My Claim"
       }
     },
     "/v1/venues/{venue_id}/me/offers/{offer_id}/withdraw": {
@@ -12648,6 +13122,89 @@
           }
         },
         "summary": "Message"
+      }
+    },
+    "/v1/venues/{venue_id}/people/{user_id}/second-factor/reset": {
+      "post": {
+        "description": "The owner or a partner removes a team member's authenticator app and recovery codes after they lost both. The\nperson signs in with their password and sets up a new second factor. Not for yourself.",
+        "operationId": "reset_person_second_factor_v1_venues__venue_id__people__user_id__second_factor_reset_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "user_id",
+            "required": true,
+            "schema": {
+              "title": "User Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Reset Person Second Factor V1 Venues  Venue Id  People  User Id  Second Factor Reset Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reset Person Second Factor"
       }
     },
     "/v1/venues/{venue_id}/permissions": {
@@ -14209,7 +14766,12 @@
             "schema": {
               "anyOf": [
                 {
-                  "enum": ["pending", "approved", "rejected", "expired"],
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected",
+                    "expired"
+                  ],
                   "type": "string"
                 },
                 {
@@ -14226,7 +14788,10 @@
             "schema": {
               "anyOf": [
                 {
-                  "enum": ["leave", "swap"],
+                  "enum": [
+                    "leave",
+                    "swap"
+                  ],
                   "type": "string"
                 },
                 {
@@ -20403,7 +20968,12 @@
             "name": "kind",
             "required": true,
             "schema": {
-              "enum": ["rsa", "food_safety", "first_aid", "other"],
+              "enum": [
+                "rsa",
+                "food_safety",
+                "first_aid",
+                "other"
+              ],
               "title": "Kind",
               "type": "string"
             }
@@ -20506,7 +21076,12 @@
             "name": "kind",
             "required": true,
             "schema": {
-              "enum": ["rsa", "food_safety", "first_aid", "other"],
+              "enum": [
+                "rsa",
+                "food_safety",
+                "first_aid",
+                "other"
+              ],
               "title": "Kind",
               "type": "string"
             }
@@ -22043,7 +22618,10 @@
             "required": false,
             "schema": {
               "default": "json",
-              "enum": ["json", "csv"],
+              "enum": [
+                "json",
+                "csv"
+              ],
               "title": "Format",
               "type": "string"
             }
@@ -24100,7 +24678,7 @@
     },
     "/v1/venues/{venue_id}/workflows/me/lists": {
       "get": {
-        "description": "The lists issued to the caller, by trading day. `from_` is sent as `from`.",
+        "description": "The lists issued to the caller, by trading day, each with its status (open, overdue, missed or done). `from_` is sent as `from`.",
         "operationId": "my_lists_v1_venues__venue_id__workflows_me_lists_get",
         "parameters": [
           {

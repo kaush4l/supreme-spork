@@ -6,6 +6,7 @@ import { z } from "zod";
 import { backend } from "@/server/api/backend";
 import { ApiFailure, toApiFailure } from "@/server/api/errors";
 import { requirePrincipal } from "@/server/auth/principal";
+import { ApprovalRules } from "./approval-rules";
 import { RulesTable } from "./rules-table";
 
 export const metadata = { title: "Who can do what" };
@@ -83,6 +84,7 @@ export default async function RulesPage({
         grantable={parsed.data.grantable_roles}
         canEdit={isOwner}
       />
+      <ApprovalRules venueId={venueId} />
     </VStack>
   );
 }

@@ -1443,6 +1443,46 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/me/colleagues": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Colleagues
+     * @description Active team members to pick from (for handing over a shift): id, name and positions only, never pay or contact.
+     */
+    get: operations["my_colleagues_v1_venues__venue_id__me_colleagues_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/hours": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Hours
+     * @description The caller's own worked hours and an estimate of earnings (hours times their own rate). Defaults to the last 14 days.
+     */
+    get: operations["my_hours_v1_venues__venue_id__me_hours_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/me/offers": {
     parameters: {
       query?: never;
@@ -1478,6 +1518,26 @@ export interface paths {
      *     the manager decides. 422 `not_eligible` says why you cannot take it.
      */
     post: operations["claim_offer_v1_venues__venue_id__me_offers__offer_id__claim_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/offers/{offer_id}/claim/withdraw": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Withdraw My Claim
+     * @description Take back your own request for an offered shift, while nobody has decided it. 404 `no_claim` when you made none.
+     */
+    post: operations["withdraw_my_claim_v1_venues__venue_id__me_offers__offer_id__claim_withdraw_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1788,6 +1848,27 @@ export interface paths {
     get: operations["message_v1_venues__venue_id__messages__message_id__get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/people/{user_id}/second-factor/reset": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Reset Person Second Factor
+     * @description The owner or a partner removes a team member's authenticator app and recovery codes after they lost both. The
+     *     person signs in with their password and sets up a new second factor. Not for yourself.
+     */
+    post: operations["reset_person_second_factor_v1_venues__venue_id__people__user_id__second_factor_reset_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -3901,7 +3982,7 @@ export interface paths {
     };
     /**
      * My Lists
-     * @description The lists issued to the caller, by trading day. `from_` is sent as `from`.
+     * @description The lists issued to the caller, by trading day, each with its status (open, overdue, missed or done). `from_` is sent as `from`.
      */
     get: operations["my_lists_v1_venues__venue_id__workflows_me_lists_get"];
     put?: never;
@@ -8614,6 +8695,81 @@ export interface operations {
       };
     };
   };
+  my_colleagues_v1_venues__venue_id__me_colleagues_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_hours_v1_venues__venue_id__me_hours_get: {
+    parameters: {
+      query?: {
+        from?: string | null;
+        to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   my_offers_v1_venues__venue_id__me_offers_get: {
     parameters: {
       query?: never;
@@ -8657,6 +8813,43 @@ export interface operations {
         authorization?: string | null;
         "x-api-key"?: string | null;
         "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        offer_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  withdraw_my_claim_v1_venues__venue_id__me_offers__offer_id__claim_withdraw_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
       };
       path: {
         venue_id: string;
@@ -9276,6 +9469,43 @@ export interface operations {
       path: {
         venue_id: string;
         message_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  reset_person_second_factor_v1_venues__venue_id__people__user_id__second_factor_reset_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        user_id: string;
       };
       cookie?: never;
     };
