@@ -95,6 +95,10 @@ export function navFor(me: Rights): NavSection[] {
       path: "/checklists",
     });
   }
+  if (isManager(me)) {
+    manage.push({ key: "readings", label: "Readings log", path: "/readings" });
+    manage.push({ key: "actions", label: "Follow-ups", path: "/actions" });
+  }
   if (can(me, "timesheet.view")) {
     manage.push({ key: "timesheet", label: "Timesheet", path: "/timesheet" });
   }

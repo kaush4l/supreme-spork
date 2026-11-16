@@ -343,7 +343,7 @@ export interface paths {
      *     missed and overdue checklists, leave, swap, offer, draft and change requests waiting, and licences expired or about to
      *     expire. `day` is a trading day, YYYY-MM-DD (default: today's). Each item has `severity` (act_now, soon, watch), the money
      *     it touches (`effect_cents`, or `effect_note` in words when unknown), `who` may act and by which `right`, how long it has
-     *     waited (`since`), and a `target` and `where` to deal with it. Sorted by severity, then money (most first), then oldest.
+     *     waited (`since`, with `since_kind` saying whether it is a wait that began, a `due` date or an `expires` date), and a `target` and `where` to deal with it. Sorted by severity, then money (most first), then oldest.
      *     At most 100 items (`truncated: true` when cut; `total` is the full count).
      */
     get: operations["needs_attention_v1_venues__venue_id__attention_get"];
@@ -852,6 +852,150 @@ export interface paths {
     put?: never;
     /** Withdraw Request */
     post: operations["withdraw_request_v1_venues__venue_id__change_requests__request_id__withdraw_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/checklists/readings": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Readings
+     * @description Every saved reading of a number item that has a range, for issued lists whose trading day is in `from` to `to`
+     *     (YYYY-MM-DD, at most 31 days): day, time, list, item, value, range, in or out of range, and who took it. Oldest first.
+     */
+    get: operations["list_readings_v1_venues__venue_id__checklists_readings_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/checklists/readings.csv": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Readings Csv
+     * @description The same rows as a CSV file, with the same columns.
+     */
+    get: operations["readings_csv_v1_venues__venue_id__checklists_readings_csv_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/corrective-actions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Corrective Actions
+     * @description Follow-ups raised by failed checks. `state` is open (default), done, cancelled or all (422 `bad_state`). Open ones come
+     *     first, overdue then due soonest; closed ones newest first. Each has `overdue` (the server's clock) and `owner_name`.
+     */
+    get: operations["list_corrective_actions_v1_venues__venue_id__corrective_actions_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/corrective-actions/owners": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Corrective Action Owners
+     * @description Who a follow-up can be given to: the owners, partners and managers of this venue, `{user_id, name}`, by name.
+     */
+    get: operations["corrective_action_owners_v1_venues__venue_id__corrective_actions_owners_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/corrective-actions/{action_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Corrective Action */
+    get: operations["get_corrective_action_v1_venues__venue_id__corrective_actions__action_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Change Corrective Action
+     * @description Give an open follow-up an owner (a member holding owner, partner or manager: 422 `bad_owner`; null clears) and/or a new
+     *     due time (with a time zone). A closed one is a 409 `already_closed`.
+     */
+    patch: operations["change_corrective_action_v1_venues__venue_id__corrective_actions__action_id__patch"];
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/corrective-actions/{action_id}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Cancel Corrective Action
+     * @description Cancel it with a reason (required: 422 `reason_needed`). Closed means closed: 409 `already_closed`.
+     */
+    post: operations["cancel_corrective_action_v1_venues__venue_id__corrective_actions__action_id__cancel_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/corrective-actions/{action_id}/done": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Done Corrective Action
+     * @description Mark it done with a note of what was done (required: 422 `note_needed`). Closed means closed: 409 `already_closed`.
+     */
+    post: operations["done_corrective_action_v1_venues__venue_id__corrective_actions__action_id__done_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -4722,6 +4866,26 @@ export interface components {
       /** Name */
       name?: string | null;
     };
+    /** CorrectiveActionCancelIn */
+    CorrectiveActionCancelIn: {
+      /** Reason */
+      reason?: string | null;
+    };
+    /**
+     * CorrectiveActionChangeIn
+     * @description Send only what changes. `owner_user_id: null` clears the owner.
+     */
+    CorrectiveActionChangeIn: {
+      /** Due At */
+      due_at?: string | null;
+      /** Owner User Id */
+      owner_user_id?: string | null;
+    };
+    /** CorrectiveActionDoneIn */
+    CorrectiveActionDoneIn: {
+      /** Note */
+      note?: string | null;
+    };
     /** DayIn */
     DayIn: {
       /**
@@ -7457,6 +7621,321 @@ export interface operations {
       cookie?: never;
     };
     requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_readings_v1_venues__venue_id__checklists_readings_get: {
+    parameters: {
+      query?: {
+        from?: string | null;
+        to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  readings_csv_v1_venues__venue_id__checklists_readings_csv_get: {
+    parameters: {
+      query?: {
+        from?: string | null;
+        to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_corrective_actions_v1_venues__venue_id__corrective_actions_get: {
+    parameters: {
+      query?: {
+        state?: string;
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  corrective_action_owners_v1_venues__venue_id__corrective_actions_owners_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_corrective_action_v1_venues__venue_id__corrective_actions__action_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        action_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  change_corrective_action_v1_venues__venue_id__corrective_actions__action_id__patch: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        action_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CorrectiveActionChangeIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cancel_corrective_action_v1_venues__venue_id__corrective_actions__action_id__cancel_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        action_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CorrectiveActionCancelIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  done_corrective_action_v1_venues__venue_id__corrective_actions__action_id__done_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        action_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CorrectiveActionDoneIn"];
+      };
+    };
     responses: {
       /** @description Successful Response */
       200: {
@@ -11522,6 +12001,7 @@ export interface operations {
       header?: {
         authorization?: string | null;
         "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
       };
       path: {
         venue_id: string;
@@ -11872,6 +12352,7 @@ export interface operations {
       header?: {
         authorization?: string | null;
         "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
       };
       path: {
         venue_id: string;

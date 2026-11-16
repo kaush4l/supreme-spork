@@ -1,11 +1,13 @@
 import { AppShell } from "@astryxdesign/core/AppShell";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { z } from "zod";
 import { backend } from "@/server/api/backend";
 import { fetchMe } from "@/server/api/me";
 import { requirePrincipal } from "@/server/auth/principal";
 import { myRights } from "@/server/data/me";
 import { navFor } from "@/server/nav";
+import { AttentionBadge } from "./_components/attention-badge";
 import { VenueNav } from "./_components/venue-nav";
 
 /**
@@ -26,6 +28,10 @@ export default async function VenueLayout({
     myRights(principal.accessToken, venueId, `/venues/${venueId}`),
     fetchMe(backend(principal.accessToken)),
   ]);
+  const sections = navFor(rights);
+  const hasAttention = sections.some((s) =>
+    s.items.some((i) => i.key === "attention"),
+  );
   const venue = me.venues.find((v) => v.id === venueId);
   return (
     <AppShell
@@ -35,7 +41,17 @@ export default async function VenueLayout({
         <VenueNav
           venueId={venueId}
           venueName={venue?.name ?? "Venue"}
-          sections={navFor(rights)}
+          sections={sections}
+          attentionBadge={
+            hasAttention ? (
+              <Suspense fallback={null}>
+                <AttentionBadge
+                  token={principal.accessToken}
+                  venueId={venueId}
+                />
+              </Suspense>
+            ) : null
+          }
         />
       }
     >

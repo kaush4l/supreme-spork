@@ -48,7 +48,7 @@ export function SendDraft({
     });
     if (!r.ok) {
       setBusy(false);
-      setAlreadyOut(r.error.code === "draft_open");
+      setAlreadyOut(r.error.code === "draft_already_open");
       return setMessage(r.error.message);
     }
     setKey(crypto.randomUUID());

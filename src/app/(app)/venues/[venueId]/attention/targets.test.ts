@@ -41,6 +41,9 @@ describe("attention targets", () => {
     expect(targetPage("finding", "f1")?.path).toBe("/findings/f1");
     expect(targetPage("expiry_item", "e1")?.path).toBe("/expiry/e1");
     expect(targetPage("roster_draft", "d1")?.path).toBe("/roster/drafts/d1");
+    expect(targetPage("corrective_action", "a1")?.path).toBe("/actions/a1");
+    expect(targetPage("corrective_action")?.path).toBe("/actions");
+    expect(targetPage("corrective_action")?.nav).toBe("actions");
     expect(targetPage("dockets_queue", null)?.path).toBe("/dockets");
     expect(targetPage("bank_files_review")?.path).toBe("/bank/files");
   });

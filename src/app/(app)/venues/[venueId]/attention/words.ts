@@ -17,9 +17,9 @@ export function whoWords(who: readonly string[]): string {
   return `For: ${who.map((r) => ROLE_WORDS[r] ?? r).join(", ")}`;
 }
 
-/** The label for the backend's `since`: for a due date or an expiry date it is that date, not a wait. */
-export function sinceLabel(item: { kind: string; key: string }): string {
-  if (item.key === "bills_due_soon") return "Due";
-  if (item.kind === "expiry") return "Expiry date";
+/** The label for the backend's `since`, from the `since_kind` the backend sends. */
+export function sinceLabel(item: { since_kind?: string | null }): string {
+  if (item.since_kind === "due") return "Due";
+  if (item.since_kind === "expires") return "Expiry date";
   return "Waiting since";
 }

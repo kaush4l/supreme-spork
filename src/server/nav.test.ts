@@ -53,6 +53,21 @@ describe("navigation by role and rights", () => {
     expect(mayOpen(m, "roster")).toBe(false);
     expect(mayOpen(m, "board")).toBe(true);
   });
+  test("owners, partners and managers get Follow-ups next to the readings log; staff and bookkeepers do not", () => {
+    for (const me of [manager, owner, { ...owner, roles: ["partner"] }]) {
+      const k = keys(me);
+      expect(k).toContain("actions");
+      expect(k.indexOf("actions")).toBe(k.indexOf("readings") + 1);
+      expect(mayOpen(me, "actions")).toBe(true);
+    }
+    expect(mayOpen(staff, "actions")).toBe(false);
+    expect(mayOpen(bookkeeper, "actions")).toBe(false);
+    expect(
+      navFor(manager)
+        .flatMap((s) => s.items)
+        .find((i) => i.key === "actions"),
+    ).toEqual({ key: "actions", label: "Follow-ups", path: "/actions" });
+  });
   test("an owner gets settings and the rules page", () => {
     expect(mayOpen(owner, "settings")).toBe(true);
     expect(mayOpen(owner, "rules")).toBe(true);

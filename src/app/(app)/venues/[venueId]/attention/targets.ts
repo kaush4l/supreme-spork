@@ -30,6 +30,11 @@ const PAGES: Record<string, (id: string | null) => TargetPage> = {
     path: id ? `/expiry/${id}` : "/expiry",
     nav: "expiry",
   }),
+  // A follow-up raised by a failed check.
+  corrective_action: (id) => ({
+    path: id ? `/actions/${id}` : "/actions",
+    nav: "actions",
+  }),
 };
 
 /** Every target kind this mapping covers. */

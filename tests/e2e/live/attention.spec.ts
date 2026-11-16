@@ -73,8 +73,12 @@ test.describe("needs attention", () => {
     await page.waitForURL(`**/venues/${venue}/attention`);
     await expect(heading(page, "Needs attention", 1)).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "Needs attention" }).first(),
+      page.getByRole("link", { name: /^Needs attention/ }).first(),
     ).toBeVisible();
+    // The count badge comes in after the page (it is streamed), and shows the backend's total.
+    await expect(
+      page.getByRole("link", { name: /^Needs attention\s*(\d+|100\+)$/ }),
+    ).toBeVisible({ timeout: 30_000 });
   });
 
   test("the manager lands on it and sees cards for what they may act on", async ({

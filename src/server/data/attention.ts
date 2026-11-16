@@ -18,6 +18,8 @@ export const attentionItemSchema = z.object({
   right: z.string().nullable(),
   /** An ISO time or a plain date (YYYY-MM-DD) when the cause began or falls due; null when the source does not know. */
   since: z.string().nullable(),
+  /** What `since` is: `waiting` (a wait that began), `due` (a due date) or `expires` (an expiry date); null when `since` is null. */
+  since_kind: z.string().nullish(),
   target: z.object({ kind: z.string(), id: z.string().nullish() }),
   where: z.string().nullish(),
 });

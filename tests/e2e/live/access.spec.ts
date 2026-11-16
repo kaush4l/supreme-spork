@@ -150,9 +150,9 @@ const ALLOWED: Record<Role, string[]> = {
   staff2: NAV.staff2,
 };
 const FIRST_PAGE: Partial<Record<Role, string>> = {
-  owner: "/board",
-  partner: "/board",
-  manager: "/board",
+  owner: "/attention",
+  partner: "/attention",
+  manager: "/attention",
   bookkeeper: "/week",
   staff: "/today",
 };
