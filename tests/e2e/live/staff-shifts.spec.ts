@@ -10,6 +10,7 @@ import {
   publishWeekOf,
   ruleValue,
   shownAs,
+  shownFrom,
   venuePath,
   watchApp,
 } from "../support/staff-api";
@@ -18,9 +19,9 @@ skipUnlessLive();
 test.use({ actionTimeout: 15_000 });
 // the staff login is shared, so the tests of this file run one after the other
 test.describe.configure({ mode: "serial" });
-// /me/offers is slow on a demo venue full of old test offers (tens of seconds), so waits after a refresh are generous
-test.setTimeout(300_000);
-const expectSoon = expect.configure({ timeout: 90_000 });
+// the first load of a page compiles on the dev server, so waits after a refresh are longer than the 5 s default
+test.setTimeout(120_000);
+const expectSoon = expect.configure({ timeout: 30_000 });
 
 /** The smallest element holding both the text and a button of this name. */
 const cardWith = (page: Page, text: string, button: string) =>
@@ -79,13 +80,12 @@ test("shifts are grouped by day and can be put in the pool and taken back", asyn
 
 test("a colleague claims a pooled shift and the manager decides (wording and result)", async ({
   browser,
-  page,
 }) => {
   const shift = await makeShift({ position: "Manager" });
   const v = await venuePath();
   try {
     const offerId = await dropShift(shift.id);
-    const shown = await shownAs(shift.id, shift.day);
+    const shown = shownFrom(shift);
 
     const other = await browser.newContext();
     const mgr = await other.newPage();
@@ -185,7 +185,6 @@ test("a colleague (staff2) takes a claim back and the manager no longer sees it;
   browser,
 }) => {
   const shift = await makeShift({ position: "Waiter" });
-  const v = await venuePath();
   const contexts: { close: () => Promise<void> }[] = [];
   try {
     const shown = await shownAs(shift.id, shift.day);
@@ -266,14 +265,16 @@ test("an open shift offered by the manager uses the venue's pickup wording", asy
         )
         .first(),
     ).toBeVisible();
-    // the card of this shift: the one whose claim button is still there after the claim
-    const claimButtons = mgr.getByRole("button", { name: "Claim this shift" });
-    const own = mgr.getByRole("button", { name: "Can't work it" });
-    const ownBefore = await own.count();
-    await claimButtons.last().click();
+    // the card of this shift, found by its day span (other open shifts may be on offer too)
+    const shown = shownFrom(shift);
+    await cardWith(mgr, shown.span, "Claim this shift")
+      .getByRole("button", { name: "Claim this shift" })
+      .click();
     if (firstCome)
-      // taken at once: the offer leaves the list and the shift is now one of mine
-      await expectSoon(own).toHaveCount(ownBefore + 1);
+      // taken at once: the shift is now one of mine
+      await expectSoon(
+        mgr.getByText("You got this shift").first(),
+      ).toBeVisible();
     else
       await expectSoon(
         mgr.getByText("Waiting for a manager").first(),
@@ -292,7 +293,7 @@ test("a first-come claim says You got this shift, and still does after a reload"
   const shift = await makeShift({ position: "Manager", open: true });
   try {
     expect((await offerOpenShift(shift.id)).status).toBeLessThan(300);
-    const shown = await shownAs(shift.id, shift.day);
+    const shown = shownFrom(shift);
     const other = await browser.newContext();
     const mgr = await other.newPage();
     const id = await signIn(mgr, "manager");

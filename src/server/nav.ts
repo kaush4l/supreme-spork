@@ -151,13 +151,27 @@ export function navFor(me: Rights): NavSection[] {
       ],
     });
   }
+  // The "needs attention" list comes first for everyone who may read it.
+  if (readsBooks(me) && sections.length > 0) {
+    sections[0].items.unshift({
+      key: "attention",
+      label: "Needs attention",
+      path: "/attention",
+    });
+  }
   return sections;
 }
 
-/** The first page for this person: the board for a manager, otherwise their own day. */
+/** The first page for this person: the needs-attention list for an owner, partner or manager, the week for a lone
+ * bookkeeper, otherwise their own day. */
 export function landingPath(me: Rights): string {
-  if (isManager(me)) return "/board";
-  return navFor(me)[0]?.items[0]?.path ?? "";
+  if (isManager(me)) return "/attention";
+  // A bookkeeper keeps the week (or their own day when they also work shifts): needs attention is for those who run the venue.
+  return (
+    navFor(me)
+      .flatMap((s) => s.items)
+      .find((i) => i.key !== "attention")?.path ?? ""
+  );
 }
 
 /** A page is open to the person when it is in their navigation (the page itself still asks the backend). */

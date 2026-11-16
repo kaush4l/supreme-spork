@@ -60,6 +60,7 @@ describe("navigation by role and rights", () => {
   test("a bookkeeper has no shift pages", () => {
     expect(mayOpen(bookkeeper, "today")).toBe(false);
     expect(keys(bookkeeper)).toEqual([
+      "attention",
       "week",
       "messages",
       "dockets",
@@ -75,6 +76,7 @@ describe("navigation by role and rights", () => {
       rights: ["money.pnl.view", "money.cash", "money.exports"],
     };
     expect(keys(b)).toEqual([
+      "attention",
       "week",
       "messages",
       "dockets",
@@ -105,7 +107,9 @@ describe("navigation by role and rights", () => {
       false,
     );
     expect(mayOpen({ ...owner, has_staff_profile: true }, "today")).toBe(true);
-    expect(landingPath({ ...owner, has_staff_profile: false })).toBe("/board");
+    expect(landingPath({ ...owner, has_staff_profile: false })).toBe(
+      "/attention",
+    );
   });
   test("a manager can open change requests (to withdraw their own), an owner has them under Owner", () => {
     expect(mayOpen(manager, "changes")).toBe(true);
@@ -113,7 +117,15 @@ describe("navigation by role and rights", () => {
   });
   test("the landing page is the first one in the navigation", () => {
     expect(landingPath(staff)).toBe("/today");
-    expect(landingPath(manager)).toBe("/board");
+    expect(landingPath(manager)).toBe("/attention");
+    expect(landingPath(owner)).toBe("/attention");
+    expect(landingPath({ ...owner, roles: ["partner"] })).toBe("/attention");
     expect(landingPath(bookkeeper)).toBe("/week");
+  });
+  test("needs attention is first for everyone who reads the books, and not for staff", () => {
+    for (const me of [manager, owner, bookkeeper])
+      expect(navFor(me)[0].items[0].key).toBe("attention");
+    expect(mayOpen(staff, "attention")).toBe(false);
+    expect(keys(manager).filter((k) => k === "attention")).toHaveLength(1);
   });
 });

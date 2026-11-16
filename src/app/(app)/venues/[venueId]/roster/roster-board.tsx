@@ -9,7 +9,7 @@ import { HStack, VStack } from "@astryxdesign/core/Layout";
 import { Link } from "@astryxdesign/core/Link";
 import { Heading, Text } from "@astryxdesign/core/Text";
 import { useState, useTransition } from "react";
-import { copyLastWeek, publishWeek } from "./actions";
+import { copyLastWeek, offerShift, openShift, publishWeek } from "./actions";
 import { ShiftDialog } from "./shift-dialog";
 import type { DayView, PersonOption, ShiftView } from "./types";
 
@@ -58,7 +58,10 @@ export function RosterBoard({
     status: "success" | "info";
     title: string;
     approval: boolean;
+    detail?: string;
   } | null>(null);
+  const [offering, setOffering] = useState<string | null>(null);
+  const [offerKey, setOfferKey] = useState(() => crypto.randomUUID());
 
   const copy = () =>
     run(async () => {
@@ -101,6 +104,43 @@ export function RosterBoard({
         });
     });
 
+  const offer = (s: ShiftView) =>
+    run(async () => {
+      if (offering) return;
+      setOffering(s.id);
+      setError(null);
+      setNotice(null);
+      const r = await offerShift({ venueId, key: offerKey, externalId: s.id });
+      setOffering(null);
+      if (!r.ok) return setError(r.error.message);
+      setOfferKey(crypto.randomUUID());
+      setNotice({
+        status: "success",
+        title: `Offered. ${r.data.told} ${r.data.told === 1 ? "person was" : "people were"} told.`,
+        approval: false,
+        detail:
+          r.data.eligible.length > 0
+            ? `Could work it: ${r.data.eligible.join(", ")}.`
+            : "Nobody on the team could work it.",
+      });
+    });
+
+  const makeOpen = (s: ShiftView) =>
+    run(async () => {
+      if (offering) return;
+      setOffering(s.id);
+      setError(null);
+      setNotice(null);
+      const r = await openShift({ venueId, externalId: s.id });
+      setOffering(null);
+      if (!r.ok) return setError(r.error.message);
+      setNotice({
+        status: "success",
+        title: `${s.who} is off that shift. It is open.`,
+        approval: false,
+      });
+    });
+
   const card = (s: ShiftView) => (
     <VStack key={s.id} gap={1} hAlign="stretch">
       <Text type="body">
@@ -124,12 +164,33 @@ export function RosterBoard({
           {WARNING_WORDS[w.kind] ?? "Check"}: {w.message}
         </Text>
       ))}
-      <Button
-        label="Edit"
-        variant="secondary"
-        size="sm"
-        onClick={() => setEditing({ shift: s, date: "" })}
-      />
+      <HStack gap={1} wrap="wrap">
+        <Button
+          label="Edit"
+          variant="secondary"
+          size="sm"
+          onClick={() => setEditing({ shift: s, date: "" })}
+        />
+        {s.isOpen ? (
+          <Button
+            label="Offer it"
+            variant="secondary"
+            size="sm"
+            isLoading={offering === s.id}
+            isDisabled={pending}
+            onClick={() => offer(s)}
+          />
+        ) : (
+          <Button
+            label="Make open"
+            variant="secondary"
+            size="sm"
+            isLoading={offering === s.id}
+            isDisabled={pending}
+            onClick={() => makeOpen(s)}
+          />
+        )}
+      </HStack>
     </VStack>
   );
 
@@ -174,7 +235,9 @@ export function RosterBoard({
               <Link href={`/venues/${venueId}/changes`}>
                 See change requests
               </Link>
-            ) : undefined
+            ) : (
+              notice.detail
+            )
           }
         />
       ) : null}

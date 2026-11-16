@@ -173,3 +173,48 @@ export const publishWeek = action(
     };
   },
 );
+
+const offeredAnswer = z.object({
+  eligible: z.array(z.string()).optional().default([]),
+  told: z.number().optional().default(0),
+});
+
+/** Offer an open shift (in a published week) to the people who could work it; the backend tells them. */
+export const offerShift = action(
+  strictInput({ venueId: z.uuid(), key: z.string(), externalId: z.string() }),
+  async ({ venueId, key, externalId }, principal) => {
+    const { data, error, response } = await backend(principal.accessToken).POST(
+      "/v1/venues/{venue_id}/roster/shifts/{external_id}/offer",
+      {
+        params: { path: { venue_id: venueId, external_id: externalId } },
+        headers: idempotencyHeader(key),
+      },
+    );
+    if (error !== undefined || !response.ok)
+      throw toApiFailure(response.status, error);
+    refresh(venueId);
+    revalidatePath(`/venues/${venueId}/roster/offers`);
+    const a = offeredAnswer.safeParse(data);
+    return {
+      eligible: a.success ? a.data.eligible : [],
+      told: a.success ? a.data.told : 0,
+    };
+  },
+);
+
+/** Take the person off a shift so it is open again. */
+export const openShift = action(
+  strictInput({ venueId: z.uuid(), externalId: z.string() }),
+  async ({ venueId, externalId }, principal) => {
+    const { error, response } = await backend(principal.accessToken).POST(
+      "/v1/venues/{venue_id}/roster/shifts/{external_id}/open",
+      {
+        params: { path: { venue_id: venueId, external_id: externalId } },
+      },
+    );
+    if (error !== undefined || !response.ok)
+      throw toApiFailure(response.status, error);
+    refresh(venueId);
+    return { done: true };
+  },
+);

@@ -330,6 +330,31 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/attention": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Needs Attention
+     * @description Everything that needs a decision or a fix now, as this caller may act on it: the summary's money items, open findings,
+     *     missed and overdue checklists, leave, swap, offer, draft and change requests waiting, and licences expired or about to
+     *     expire. `day` is a trading day, YYYY-MM-DD (default: today's). Each item has `severity` (act_now, soon, watch), the money
+     *     it touches (`effect_cents`, or `effect_note` in words when unknown), `who` may act and by which `right`, how long it has
+     *     waited (`since`), and a `target` and `where` to deal with it. Sorted by severity, then money (most first), then oldest.
+     *     At most 100 items (`truncated: true` when cut; `total` is the full count).
+     */
+    get: operations["needs_attention_v1_venues__venue_id__attention_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/bank-files/review": {
     parameters: {
       query?: never;
@@ -2469,6 +2494,27 @@ export interface paths {
      * @description Copy the week before `week` into `week`, which must be empty.
      */
     post: operations["copy_week_v1_venues__venue_id__roster_copy_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/roster/drafts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Drafts
+     * @description Drafts sent to staff, newest first. Filter by `week` (the Monday, YYYY-MM-DD) or `state` (open, published, cancelled), so a
+     *     manager can find a draft's board again after a reload.
+     */
+    get: operations["list_drafts_v1_venues__venue_id__roster_drafts_get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -6296,6 +6342,44 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  needs_attention_v1_venues__venue_id__attention_get: {
+    parameters: {
+      query?: {
+        day?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
         headers: {
           [name: string]: unknown;
         };
@@ -10909,6 +10993,45 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_drafts_v1_venues__venue_id__roster_drafts_get: {
+    parameters: {
+      query?: {
+        week?: string | null;
+        state?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          }[];
         };
       };
       /** @description Validation Error */

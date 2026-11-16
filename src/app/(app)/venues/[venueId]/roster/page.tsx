@@ -19,6 +19,7 @@ import {
 import { formatDay, formatSpan } from "@/server/format";
 import { can } from "@/server/nav";
 import { RosterBoard } from "./roster-board";
+import { SendDraft } from "./send-draft";
 import type { ShiftView } from "./types";
 import {
   addDays,
@@ -91,6 +92,7 @@ export default async function RosterPage({
       position: s.position ?? "No position",
       staffId: s.staff_ref ? (idByRef.get(s.staff_ref) ?? null) : null,
       who: s.staff_name ?? "Open",
+      isOpen: s.status === "open",
       span: formatSpan(s.start, s.end, tz),
       startInput: toLocalInput(s.start, tz),
       endInput: toLocalInput(s.end, tz),
@@ -121,6 +123,17 @@ export default async function RosterPage({
         </Text>
         <Link href={`${base}${addDays(week, 7)}`}>Next week</Link>
       </HStack>
+      <HStack gap={3} wrap="wrap">
+        <Link href={`/venues/${venueId}/roster/suggestions?week=${week}`}>
+          Suggestions for this week
+        </Link>
+        <Link href={`/venues/${venueId}/roster/offers`}>Shift offers</Link>
+        <Link href={`/venues/${venueId}/roster/drafts`}>Drafts</Link>
+        <Link href={`/venues/${venueId}/roster/templates`}>Templates</Link>
+        <Link href={`/venues/${venueId}/roster/history?week=${week}`}>
+          History of this week
+        </Link>
+      </HStack>
       <RosterBoard
         venueId={venueId}
         week={week}
@@ -132,6 +145,9 @@ export default async function RosterPage({
         hasShifts={grid.shifts.length > 0}
         changesLabel={changesLabel(grid)}
       />
+      {grid.shifts.length > 0 ? (
+        <SendDraft venueId={venueId} week={week} />
+      ) : null}
       {grid.leave.length > 0 ? (
         <Card padding={4}>
           <VStack gap={2}>

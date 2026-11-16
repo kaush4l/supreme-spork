@@ -208,7 +208,11 @@ export function watchApp(page: import("@playwright/test").Page) {
     )
       problems.push(`${m.location().url}: ${m.text()}`);
   });
-  page.on("pageerror", (e) => problems.push(String(e)));
+  page.on("pageerror", (e) => {
+    // React's dev-only render timing on a page that ends in notFound() ("cannot have a negative time stamp")
+    if (/Failed to execute 'measure' on 'Performance'/.test(String(e))) return;
+    problems.push(String(e));
+  });
   return {
     expectNone: () => {
       if (problems.length > 0)
@@ -248,6 +252,27 @@ export async function shownAs(id: string, _day: string) {
       month: "short",
     }).format(new Date(s.start)),
     span: `${time(s.start)} to ${time(s.end)}`,
+  };
+}
+
+/**
+ * The same wording, worked out from a shift made by makeShift. For a shift that is not (or no longer) one of the staff
+ * login's own, such as an open shift or one just put in the pool, where `shownAs` cannot find it in /me/shifts.
+ */
+export function shownFrom(shift: { start: string; end: string }) {
+  const clock = (local: string) => {
+    const [h, m] = local.slice(11, 16).split(":").map(Number);
+    return `${h % 12 || 12}:${String(m).padStart(2, "0")} ${h < 12 ? "am" : "pm"}`;
+  };
+  const [y, mo, d] = shift.start.slice(0, 10).split("-").map(Number);
+  return {
+    day: new Intl.DateTimeFormat("en-AU", {
+      timeZone: "UTC",
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+    }).format(new Date(Date.UTC(y, mo - 1, d))),
+    span: `${clock(shift.start)} to ${clock(shift.end)}`,
   };
 }
 

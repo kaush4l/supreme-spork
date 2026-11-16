@@ -1,5 +1,6 @@
 import { Card } from "@astryxdesign/core/Card";
 import { VStack } from "@astryxdesign/core/Layout";
+import { Link } from "@astryxdesign/core/Link";
 import { Heading, Text } from "@astryxdesign/core/Text";
 import { notFound } from "next/navigation";
 import { z } from "zod";
@@ -52,6 +53,9 @@ export default async function ShiftsPage({
       <Text type="supporting" color="secondary">
         The next 14 days.
       </Text>
+      <Link href={`/venues/${venueId}/shifts/drafts`}>
+        Draft rosters waiting for your reply
+      </Link>
       {days.length === 0 ? (
         <Card padding={4}>
           <Text type="body">You have no shifts coming up.</Text>

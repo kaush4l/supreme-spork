@@ -43,7 +43,11 @@ function watchForBrowserErrors(
       return;
     problems.push(`${text} (${m.location().url})`);
   });
-  page.on("pageerror", (e) => problems.push(String(e)));
+  page.on("pageerror", (e) => {
+    // React's dev-only render timing on a page that ends in notFound() ("cannot have a negative time stamp")
+    if (/Failed to execute 'measure' on 'Performance'/.test(String(e))) return;
+    problems.push(String(e));
+  });
   return { expectNone: () => expect(problems, "browser errors").toEqual([]) };
 }
 
@@ -134,12 +138,13 @@ const NAV: Record<Role, string[]> = {
 };
 /**
  * Pages that open (anything else is "not found"). A page can open without being in the navigation: the backend decides,
- * so everyone may read their own notices and their own change requests, and a manager may read the venue settings.
+ * so everyone may read their own notices and their own change requests, a manager may read the venue settings, and
+ * the three roles that decide dockets (owner, partner, manager) may also send one (they use the Dockets page for it).
  */
 const ALLOWED: Record<Role, string[]> = {
-  owner: ["notices", ...NAV.owner],
-  partner: ["notices", ...NAV.partner],
-  manager: [...NAV.manager, "settings"],
+  owner: ["notices", "dockets/send", ...NAV.owner],
+  partner: ["notices", "dockets/send", ...NAV.partner],
+  manager: [...NAV.manager, "settings", "dockets/send"],
   bookkeeper: [...NAV.bookkeeper, "changes"],
   staff: NAV.staff,
   staff2: NAV.staff2,
@@ -371,13 +376,16 @@ for (const role of ROLES) {
         .sort();
       await expect
         .poll(async () =>
-          (
-            await links.evaluateAll((els) =>
-              els.map((e) => (e.textContent ?? "").trim()),
-            )
-          )
-            .filter((t) => t && ROUTES.some((r) => r.label === t))
-            .sort(),
+          // a page may repeat a navigation label in its own content (the bookkeeper's This week links to Profit and loss)
+          [
+            ...new Set(
+              (
+                await links.evaluateAll((els) =>
+                  els.map((e) => (e.textContent ?? "").trim()),
+                )
+              ).filter((t) => t && ROUTES.some((r) => r.label === t)),
+            ),
+          ].sort(),
         )
         .toEqual(want);
       await context.close();

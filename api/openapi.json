@@ -5152,6 +5152,96 @@
         "summary": "Create Venue"
       }
     },
+    "/v1/venues/{venue_id}/attention": {
+      "get": {
+        "description": "Everything that needs a decision or a fix now, as this caller may act on it: the summary's money items, open findings,\nmissed and overdue checklists, leave, swap, offer, draft and change requests waiting, and licences expired or about to\nexpire. `day` is a trading day, YYYY-MM-DD (default: today's). Each item has `severity` (act_now, soon, watch), the money\nit touches (`effect_cents`, or `effect_note` in words when unknown), `who` may act and by which `right`, how long it has\nwaited (`since`), and a `target` and `where` to deal with it. Sorted by severity, then money (most first), then oldest.\nAt most 100 items (`truncated: true` when cut; `total` is the full count).",
+        "operationId": "needs_attention_v1_venues__venue_id__attention_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "day",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Day"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Needs Attention V1 Venues  Venue Id  Attention Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Needs Attention"
+      }
+    },
     "/v1/venues/{venue_id}/bank-files/review": {
       "get": {
         "description": "Bank files that need a person (`status=check`, oldest first), or every bank file (`status=all`).",
@@ -16590,6 +16680,115 @@
           }
         },
         "summary": "Copy Week"
+      }
+    },
+    "/v1/venues/{venue_id}/roster/drafts": {
+      "get": {
+        "description": "Drafts sent to staff, newest first. Filter by `week` (the Monday, YYYY-MM-DD) or `state` (open, published, cancelled), so a\nmanager can find a draft's board again after a reload.",
+        "operationId": "list_drafts_v1_venues__venue_id__roster_drafts_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "week",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Week"
+            }
+          },
+          {
+            "in": "query",
+            "name": "state",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "title": "Response List Drafts V1 Venues  Venue Id  Roster Drafts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Drafts"
       }
     },
     "/v1/venues/{venue_id}/roster/drafts/{draft_id}/board": {

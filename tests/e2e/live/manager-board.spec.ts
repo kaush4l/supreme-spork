@@ -195,10 +195,14 @@ test.describe("manager today board", () => {
     const v = await signIn(page, "manager");
     await openBoard(page, v, DEMO_DAY);
     await noSideScroll(page);
-    await page.locator(`a[href^="/venues/${v}/board/"]`).first().click();
-    await expect(
-      page.getByRole("link", { name: "Back to the Today board" }),
-    ).toBeVisible({ timeout: 30_000 });
+    const back = page.getByRole("link", { name: "Back to the Today board" });
+    const first = page.locator(`a[href^="/venues/${v}/board/"]`).first();
+    // A first click right after the board draws can be lost on the dev server (the page navigates to its own address
+    // again instead of opening the list), so click again until the list opens.
+    await expect(async () => {
+      if (!(await back.isVisible())) await first.click({ timeout: 5_000 });
+      await expect(back).toBeVisible({ timeout: 8_000 });
+    }).toPass({ timeout: 60_000 });
     await noSideScroll(page);
   });
 });

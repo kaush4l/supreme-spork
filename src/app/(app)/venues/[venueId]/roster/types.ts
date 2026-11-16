@@ -4,6 +4,8 @@ export type ShiftView = {
   position: string;
   staffId: string | null;
   who: string;
+  /** The backend's own word: nobody is on this shift (it can be offered). */
+  isOpen: boolean;
   span: string;
   /** `YYYY-MM-DDTHH:mm` venue-local, for the edit form. */
   startInput: string;
