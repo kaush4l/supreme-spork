@@ -8,6 +8,7 @@ import { requirePrincipal } from "@/server/auth/principal";
 import { myRights } from "@/server/data/me";
 import { navFor } from "@/server/nav";
 import { AttentionBadge } from "./_components/attention-badge";
+import { StaysFresh } from "./_components/stays-fresh";
 import { VenueNav } from "./_components/venue-nav";
 
 /**
@@ -55,6 +56,10 @@ export default async function VenueLayout({
         />
       }
     >
+      <StaysFresh
+        venueId={venueId}
+        timeZone={venue?.timezone ?? "Australia/Sydney"}
+      />
       {children}
     </AppShell>
   );

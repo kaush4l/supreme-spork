@@ -12596,6 +12596,89 @@
         "summary": "My Offers"
       }
     },
+    "/v1/venues/{venue_id}/me/offers/{offer_id}": {
+      "get": {
+        "description": "One offer as you see it, open or settled: `status` (open, filled, withdrawn, shift_cancelled, started), `label` (a plain sentence,\nfor example \"Taken by someone else at 2:05 pm\" or \"You got this shift\"), `my_outcome`, `settled_at` and `can_claim`. The notice you were\nsent opens this. 404 `offer_not_found` unless you were told about the offer, made it or asked for it. No pay, and nobody else's name.",
+        "operationId": "my_offer_v1_venues__venue_id__me_offers__offer_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "title": "Offer Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response My Offer V1 Venues  Venue Id  Me Offers  Offer Id  Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "My Offer"
+      }
+    },
     "/v1/venues/{venue_id}/me/offers/{offer_id}/claim": {
       "post": {
         "description": "Ask for an offered shift. If the venue's rule is first come first served and you are eligible, it is yours now; otherwise\nthe manager decides. 422 `not_eligible` says why you cannot take it.",

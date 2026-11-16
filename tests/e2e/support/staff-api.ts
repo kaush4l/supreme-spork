@@ -320,7 +320,12 @@ export async function noticeTotals() {
     api("staff", "GET", `${v}/workflows/notifications?limit=1`),
     "notices",
   );
-  return { total: n.total as number, unread: n.unread as number };
+  return {
+    total: n.total as number,
+    unread: n.unread as number,
+    // the page's "N new" badge counts only the unread notices that are still live
+    liveUnread: (n.live_unread ?? n.unread) as number,
+  };
 }
 
 /** Offer an open shift to the people who could work it (the venue's pickup rule decides the mode). */

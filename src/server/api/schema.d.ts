@@ -1701,6 +1701,28 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/me/offers/{offer_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Offer
+     * @description One offer as you see it, open or settled: `status` (open, filled, withdrawn, shift_cancelled, started), `label` (a plain sentence,
+     *     for example "Taken by someone else at 2:05 pm" or "You got this shift"), `my_outcome`, `settled_at` and `can_claim`. The notice you were
+     *     sent opens this. 404 `offer_not_found` unless you were told about the offer, made it or asked for it. No pay, and nobody else's name.
+     */
+    get: operations["my_offer_v1_venues__venue_id__me_offers__offer_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/me/offers/{offer_id}/claim": {
     parameters: {
       query?: never;
@@ -9469,6 +9491,43 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_offer_v1_venues__venue_id__me_offers__offer_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        offer_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
         };
       };
       /** @description Validation Error */

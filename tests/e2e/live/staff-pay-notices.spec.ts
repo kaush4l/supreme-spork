@@ -178,14 +178,14 @@ test("a new notice shows with the unread count and Mark read clears it", async (
   const errors = watchApp(page);
   await leaveDecided(false, "Not that week");
   const before = await noticeTotals();
-  expect(before.unread).toBeGreaterThan(0);
+  expect(before.liveUnread).toBeGreaterThan(0);
   const id = await signIn(page, "staff");
   await openVenuePage(page, id, "notices");
   await expectSoon(
     page.getByRole("heading", { name: "Notices", level: 1 }),
   ).toBeVisible();
   await expectSoon(
-    page.getByText(`${before.unread} new`, { exact: true }),
+    page.getByText(`${before.liveUnread} new`, { exact: true }),
   ).toBeVisible();
   const fresh = page.getByText("New: Your leave request was rejected").first();
   await expectSoon(fresh).toBeVisible();
@@ -199,9 +199,9 @@ test("a new notice shows with the unread count and Mark read clears it", async (
   await expectSoon
     .poll(async () => (await noticeTotals()).unread)
     .toBe(before.unread - 1);
-  if (before.unread - 1 > 0)
+  if (before.liveUnread - 1 > 0)
     await expectSoon(
-      page.getByText(`${before.unread - 1} new`, { exact: true }),
+      page.getByText(`${before.liveUnread - 1} new`, { exact: true }),
     ).toBeVisible();
   else await expectSoon(page.getByText(/\d+ new/)).toHaveCount(0);
   errors.expectNone();
