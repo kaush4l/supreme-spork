@@ -77,6 +77,7 @@ export default async function HomePage() {
         <Link href="/account/work">Where I work</Link>
         <Link href="/account/availability">My availability</Link>
         <Link href="/account/calendar">My calendar link</Link>
+        <Link href="/account/alerts">Alerts on this phone</Link>
         <Link href="/account/password">Change your password</Link>
         <SignOutForm label="Sign out of this device" />
         <SignOutForm label="Sign out everywhere" scope="global" />

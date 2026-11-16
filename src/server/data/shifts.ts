@@ -33,6 +33,10 @@ export const offerSchema = z.object({
   my_claim: claimSchema.nullable(),
   /** null (no claim), `waiting`, `got_it`, `not_this_time` or `offer_withdrawn`. */
   my_outcome: z.string().nullable().optional(),
+  /** Paid hours (shift length minus the break) and what they come to at my own rate: an estimate, null when I have no rate. */
+  paid_hours: z.number().nullish(),
+  estimated_cents: z.number().nullish(),
+  estimate_basis: z.string().nullish(),
 });
 export type Offer = z.infer<typeof offerSchema>;
 

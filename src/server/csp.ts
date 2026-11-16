@@ -32,6 +32,10 @@ export function buildCsp(
     "style-src-attr 'unsafe-inline'",
     `img-src 'self' blob: data: ${imgSources.join(" ")}`.trim(),
     "font-src 'self'",
+    // `strict-dynamic` makes script-src ignore 'self', and a worker falls back to script-src: allow the service worker
+    // (/sw.js) and the web app manifest by name.
+    "worker-src 'self'",
+    "manifest-src 'self'",
     "connect-src 'self'",
     frameSources.length > 0
       ? `frame-src ${frameSources.join(" ")}`

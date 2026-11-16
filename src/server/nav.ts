@@ -173,6 +173,15 @@ export function navFor(me: Rights): NavSection[] {
         { key: "settings", label: "Settings", path: "/settings" },
         { key: "rules", label: "Who can do what", path: "/rules" },
         { key: "changes", label: "Change requests", path: "/changes" },
+        ...(can(me, "pilot.scorecard.view")
+          ? [
+              {
+                key: "pilot-scorecard",
+                label: "Pilot scorecard",
+                path: "/pilot",
+              },
+            ]
+          : []),
       ],
     });
   }

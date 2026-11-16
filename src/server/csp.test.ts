@@ -34,6 +34,11 @@ describe("buildCsp", () => {
     expect(csp).toContain("upgrade-insecure-requests");
   });
 
+  test("the service worker and manifest are allowed from this origin only", () => {
+    expect(directive(csp, "worker-src")).toBe("'self'");
+    expect(directive(csp, "manifest-src")).toBe("'self'");
+  });
+
   test("development adds only what the dev server needs", () => {
     const dev = buildCsp("abc123", { dev: true });
     expect(directive(dev, "script-src")).toContain("'unsafe-eval'");

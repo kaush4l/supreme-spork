@@ -310,6 +310,67 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/me/push/public-key": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Push Public Key
+     * @description The key the browser subscribes with (`applicationServerKey`). 404 `push_not_set_up` until the server has keys.
+     */
+    get: operations["push_public_key_v1_me_push_public_key_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/me/push/subscriptions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Add Push Subscription
+     * @description Store this browser for the signed-in person: 201 when new, 200 when the same endpoint was already stored (its keys are
+     *     refreshed and a revoked one is reopened). 422 `bad_endpoint` (not a public https address) or a missing key.
+     */
+    post: operations["add_push_subscription_v1_me_push_subscriptions_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/me/push/subscriptions/{subscription_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remove Push Subscription
+     * @description Stop alerts on this device. Only your own: another person's or an unknown one is 404 `subscription_not_found`. Repeating it is harmless.
+     */
+    delete: operations["remove_push_subscription_v1_me_push_subscriptions__subscription_id__delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues": {
     parameters: {
       query?: never;
@@ -1991,7 +2052,8 @@ export interface paths {
      * My Offers
      * @description Shifts offered that you could work (and your own drops), with your claim if you made one. `my_outcome` says what came of it
      *     (waiting, got_it, not_this_time, offer_withdrawn). With `decided_within_days`, offers you asked for that were settled in the last N
-     *     days are listed too, so "you got it" is still there after a refresh.
+     *     days are listed too, so "you got it" is still there after a refresh. Each offer also carries `paid_hours`, `estimated_cents` and
+     *     `estimate_basis`: paid hours times your own hourly rate (an estimate, not a payslip; null when you have no rate).
      */
     get: operations["my_offers_v1_venues__venue_id__me_offers_get"];
     put?: never;
@@ -2437,6 +2499,50 @@ export interface paths {
      *     the right as it now stands, the same shape as an item on the rules page.
      */
     post: operations["change_approval_v1_venues__venue_id__permissions_approval_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/pilot/scorecard": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Pilot Scorecard
+     * @description The pilot measures for trading days `from`..`to`. `from` defaults to the Monday of the first published roster week (no period
+     *     and no figures when nothing was ever published), `to` to today at the venue. Each measure has `key`, `label`, `value` (percent
+     *     or null), `numerator`, `denominator`, `pass_mark`, `status` (met, not_met, not_enough_data; `reported` for a figure with no
+     *     pass mark; `tracked_outside_app` for bug triage) and a plain `basis`. `weeks` is the week-by-week table. 422: `bad_range`,
+     *     `range_too_long`.
+     */
+    get: operations["pilot_scorecard_v1_venues__venue_id__pilot_scorecard_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/pilot/scorecard.csv": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Pilot Scorecard Csv
+     * @description The week-by-week table as CSV: one line per week, a numerator and a denominator for each measure.
+     */
+    get: operations["pilot_scorecard_csv_v1_venues__venue_id__pilot_scorecard_csv_get"];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -5701,6 +5807,47 @@ export interface components {
       /** Into Item Id */
       into_item_id: string;
     };
+    /**
+     * MyOfferOut
+     * @description One offer in `GET /me/offers`. `estimated_cents`, `paid_hours` and `estimate_basis` are about the caller only: paid hours (shift
+     *     length minus the roster break) times their own hourly rate. Null cents and basis when they have no rate. An estimate, not a payslip.
+     */
+    MyOfferOut: {
+      /** Created At */
+      created_at: string;
+      /** Estimate Basis */
+      estimate_basis: string | null;
+      /** Estimated Cents */
+      estimated_cents: number | null;
+      /** Filled By */
+      filled_by: string | null;
+      /** Id */
+      id: string;
+      /** Kind */
+      kind: string;
+      /** Mine */
+      mine: boolean;
+      /** Mode */
+      mode: string;
+      /** My Claim */
+      my_claim: {
+        [key: string]: unknown;
+      } | null;
+      /** My Outcome */
+      my_outcome: string | null;
+      /** Offered By */
+      offered_by: string | null;
+      /** Paid Hours */
+      paid_hours: number;
+      /** Shift */
+      shift: {
+        [key: string]: unknown;
+      };
+      /** Status */
+      status: string;
+    } & {
+      [key: string]: unknown;
+    };
     /** Note */
     Note: {
       /** Note */
@@ -5777,6 +5924,24 @@ export interface components {
        * @default []
        */
       required_certificates: string[];
+    };
+    /** PushKeysIn */
+    PushKeysIn: {
+      /** Auth */
+      auth: string;
+      /** P256Dh */
+      p256dh: string;
+    };
+    /**
+     * PushSubscriptionIn
+     * @description What `PushSubscription.toJSON()` gives. `expirationTime` is accepted and ignored.
+     */
+    PushSubscriptionIn: {
+      /** Endpoint */
+      endpoint: string;
+      /** Expirationtime */
+      expirationTime?: number | null;
+      keys: components["schemas"]["PushKeysIn"];
     };
     /** RecipeDishIn */
     RecipeDishIn: {
@@ -6948,6 +7113,113 @@ export interface operations {
         "application/json": components["schemas"]["PersonProfileChange"];
       };
     };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  push_public_key_v1_me_push_public_key_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  add_push_subscription_v1_me_push_subscriptions_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "user-agent"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PushSubscriptionIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remove_push_subscription_v1_me_push_subscriptions__subscription_id__delete: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        subscription_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description Successful Response */
       200: {
@@ -10620,9 +10892,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": {
-            [key: string]: unknown;
-          }[];
+          "application/json": components["schemas"]["MyOfferOut"][];
         };
       };
       /** @description Validation Error */
@@ -11505,6 +11775,82 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pilot_scorecard_v1_venues__venue_id__pilot_scorecard_get: {
+    parameters: {
+      query?: {
+        from?: string | null;
+        to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  pilot_scorecard_csv_v1_venues__venue_id__pilot_scorecard_csv_get: {
+    parameters: {
+      query?: {
+        from?: string | null;
+        to?: string | null;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
         };
       };
       /** @description Validation Error */

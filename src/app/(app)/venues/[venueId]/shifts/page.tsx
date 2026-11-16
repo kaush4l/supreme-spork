@@ -8,7 +8,12 @@ import { backend } from "@/server/api/backend";
 import { fetchMe } from "@/server/api/me";
 import { requirePrincipal } from "@/server/auth/principal";
 import { myOffers, myUpcomingShifts } from "@/server/data/shifts";
-import { formatDay, formatHours, formatSpan } from "@/server/format";
+import {
+  formatDay,
+  formatHours,
+  formatMoney,
+  formatSpan,
+} from "@/server/format";
 import { groupByDay, offerState, outcomeWords } from "./group";
 import { ShiftButton } from "./shift-buttons";
 
@@ -160,6 +165,21 @@ export default async function ShiftsPage({
                     .filter(Boolean)
                     .join(" · ")}
                 </Text>
+                {o.estimated_cents != null ? (
+                  <VStack gap={1} hAlign="stretch">
+                    <Text type="body">
+                      Estimated about {formatMoney(o.estimated_cents)}
+                      {o.paid_hours != null
+                        ? ` for ${formatHours(o.paid_hours)}`
+                        : ""}
+                    </Text>
+                    {o.estimate_basis ? (
+                      <Text type="supporting" color="secondary">
+                        {o.estimate_basis}
+                      </Text>
+                    ) : null}
+                  </VStack>
+                ) : null}
                 <Text type="supporting" color="secondary">
                   {o.my_outcome === "waiting"
                     ? outcomeWords(o.my_outcome)

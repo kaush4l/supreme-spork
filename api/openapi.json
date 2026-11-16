@@ -2328,6 +2328,130 @@
         "title": "MenuItemMergeIn",
         "type": "object"
       },
+      "MyOfferOut": {
+        "additionalProperties": true,
+        "description": "One offer in `GET /me/offers`. `estimated_cents`, `paid_hours` and `estimate_basis` are about the caller only: paid hours (shift\nlength minus the roster break) times their own hourly rate. Null cents and basis when they have no rate. An estimate, not a payslip.",
+        "properties": {
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "estimate_basis": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimate Basis"
+          },
+          "estimated_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estimated Cents"
+          },
+          "filled_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Filled By"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "mine": {
+            "title": "Mine",
+            "type": "boolean"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "my_claim": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "My Claim"
+          },
+          "my_outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "My Outcome"
+          },
+          "offered_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Offered By"
+          },
+          "paid_hours": {
+            "title": "Paid Hours",
+            "type": "number"
+          },
+          "shift": {
+            "additionalProperties": true,
+            "title": "Shift",
+            "type": "object"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "mode",
+          "status",
+          "shift",
+          "offered_by",
+          "filled_by",
+          "created_at",
+          "mine",
+          "my_claim",
+          "my_outcome",
+          "paid_hours",
+          "estimated_cents",
+          "estimate_basis"
+        ],
+        "title": "MyOfferOut",
+        "type": "object"
+      },
       "Note": {
         "properties": {
           "note": {
@@ -2585,6 +2709,58 @@
           "name"
         ],
         "title": "PositionIn",
+        "type": "object"
+      },
+      "PushKeysIn": {
+        "additionalProperties": false,
+        "properties": {
+          "auth": {
+            "maxLength": 256,
+            "title": "Auth",
+            "type": "string"
+          },
+          "p256dh": {
+            "maxLength": 256,
+            "title": "P256Dh",
+            "type": "string"
+          }
+        },
+        "required": [
+          "p256dh",
+          "auth"
+        ],
+        "title": "PushKeysIn",
+        "type": "object"
+      },
+      "PushSubscriptionIn": {
+        "additionalProperties": false,
+        "description": "What `PushSubscription.toJSON()` gives. `expirationTime` is accepted and ignored.",
+        "properties": {
+          "endpoint": {
+            "maxLength": 2048,
+            "title": "Endpoint",
+            "type": "string"
+          },
+          "expirationTime": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expirationtime"
+          },
+          "keys": {
+            "$ref": "#/components/schemas/PushKeysIn"
+          }
+        },
+        "required": [
+          "endpoint",
+          "keys"
+        ],
+        "title": "PushSubscriptionIn",
         "type": "object"
       },
       "RecipeDishIn": {
@@ -5392,6 +5568,204 @@
           }
         },
         "summary": "Change My Profile"
+      }
+    },
+    "/v1/me/push/public-key": {
+      "get": {
+        "description": "The key the browser subscribes with (`applicationServerKey`). 404 `push_not_set_up` until the server has keys.",
+        "operationId": "push_public_key_v1_me_push_public_key_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Push Public Key V1 Me Push Public Key Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Push Public Key"
+      }
+    },
+    "/v1/me/push/subscriptions": {
+      "post": {
+        "description": "Store this browser for the signed-in person: 201 when new, 200 when the same endpoint was already stored (its keys are\nrefreshed and a revoked one is reopened). 422 `bad_endpoint` (not a public https address) or a missing key.",
+        "operationId": "add_push_subscription_v1_me_push_subscriptions_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "user-agent",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User-Agent"
+            }
+          },
+          {
+            "in": "header",
+            "name": "idempotency-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushSubscriptionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Add Push Subscription V1 Me Push Subscriptions Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Push Subscription"
+      }
+    },
+    "/v1/me/push/subscriptions/{subscription_id}": {
+      "delete": {
+        "description": "Stop alerts on this device. Only your own: another person's or an unknown one is 404 `subscription_not_found`. Repeating it is harmless.",
+        "operationId": "remove_push_subscription_v1_me_push_subscriptions__subscription_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "subscription_id",
+            "required": true,
+            "schema": {
+              "title": "Subscription Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Remove Push Subscription V1 Me Push Subscriptions  Subscription Id  Delete",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Remove Push Subscription"
       }
     },
     "/v1/venues": {
@@ -14526,7 +14900,7 @@
     },
     "/v1/venues/{venue_id}/me/offers": {
       "get": {
-        "description": "Shifts offered that you could work (and your own drops), with your claim if you made one. `my_outcome` says what came of it\n(waiting, got_it, not_this_time, offer_withdrawn). With `decided_within_days`, offers you asked for that were settled in the last N\ndays are listed too, so \"you got it\" is still there after a refresh.",
+        "description": "Shifts offered that you could work (and your own drops), with your claim if you made one. `my_outcome` says what came of it\n(waiting, got_it, not_this_time, offer_withdrawn). With `decided_within_days`, offers you asked for that were settled in the last N\ndays are listed too, so \"you got it\" is still there after a refresh. Each offer also carries `paid_hours`, `estimated_cents` and\n`estimate_basis`: paid hours times your own hourly rate (an estimate, not a payslip; null when you have no rate).",
         "operationId": "my_offers_v1_venues__venue_id__me_offers_get",
         "parameters": [
           {
@@ -14595,8 +14969,7 @@
               "application/json": {
                 "schema": {
                   "items": {
-                    "additionalProperties": true,
-                    "type": "object"
+                    "$ref": "#/components/schemas/MyOfferOut"
                   },
                   "title": "Response My Offers V1 Venues  Venue Id  Me Offers Get",
                   "type": "array"
@@ -16715,6 +17088,218 @@
           }
         },
         "summary": "Change Approval"
+      }
+    },
+    "/v1/venues/{venue_id}/pilot/scorecard": {
+      "get": {
+        "description": "The pilot measures for trading days `from`..`to`. `from` defaults to the Monday of the first published roster week (no period\nand no figures when nothing was ever published), `to` to today at the venue. Each measure has `key`, `label`, `value` (percent\nor null), `numerator`, `denominator`, `pass_mark`, `status` (met, not_met, not_enough_data; `reported` for a figure with no\npass mark; `tracked_outside_app` for bug triage) and a plain `basis`. `weeks` is the week-by-week table. 422: `bad_range`,\n`range_too_long`.",
+        "operationId": "pilot_scorecard_v1_venues__venue_id__pilot_scorecard_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Pilot Scorecard V1 Venues  Venue Id  Pilot Scorecard Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pilot Scorecard"
+      }
+    },
+    "/v1/venues/{venue_id}/pilot/scorecard.csv": {
+      "get": {
+        "description": "The week-by-week table as CSV: one line per week, a numerator and a denominator for each measure.",
+        "operationId": "pilot_scorecard_csv_v1_venues__venue_id__pilot_scorecard_csv_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "venue_id",
+            "required": true,
+            "schema": {
+              "title": "Venue Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "From"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "To"
+            }
+          },
+          {
+            "in": "header",
+            "name": "authorization",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Authorization"
+            }
+          },
+          {
+            "in": "header",
+            "name": "x-api-key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Api-Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Pilot Scorecard Csv"
       }
     },
     "/v1/venues/{venue_id}/pnl": {

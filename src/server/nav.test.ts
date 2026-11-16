@@ -133,6 +133,32 @@ describe("navigation by role and rights", () => {
     expect(mayOpen(manager, "changes")).toBe(true);
     expect(keys(owner).filter((k) => k === "changes")).toHaveLength(1);
   });
+  test("the pilot scorecard is under Owner for an owner or partner who holds the right, and nobody else", () => {
+    const withRight = {
+      ...owner,
+      rights: [...owner.rights, "pilot.scorecard.view"],
+    };
+    expect(mayOpen(withRight, "pilot-scorecard")).toBe(true);
+    expect(
+      mayOpen({ ...withRight, roles: ["partner"] }, "pilot-scorecard"),
+    ).toBe(true);
+    expect(mayOpen(owner, "pilot-scorecard")).toBe(false);
+    expect(
+      mayOpen(
+        { ...manager, rights: [...manager.rights, "pilot.scorecard.view"] },
+        "pilot-scorecard",
+      ),
+    ).toBe(false);
+    expect(mayOpen(staff, "pilot-scorecard")).toBe(false);
+    const item = navFor(withRight)
+      .flatMap((s) => s.items)
+      .find((i) => i.key === "pilot-scorecard");
+    expect(item).toEqual({
+      key: "pilot-scorecard",
+      label: "Pilot scorecard",
+      path: "/pilot",
+    });
+  });
   test("the landing page is the first one in the navigation", () => {
     expect(landingPath(staff)).toBe("/today");
     expect(landingPath(manager)).toBe("/attention");

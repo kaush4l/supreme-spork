@@ -6,6 +6,8 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "Supreme Spork",
   description: "Next.js + Bun + Biome + TypeScript + Astryx",
+  // The picture iOS uses when someone adds the site to the Home Screen.
+  icons: { apple: "/icon-192.png" },
 };
 
 export default async function RootLayout({

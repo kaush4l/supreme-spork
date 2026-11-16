@@ -99,8 +99,9 @@ test.describe("this week, findings and messages, as the owner", () => {
     page,
   }) => {
     await open(page, venue, "week");
+    // the week picker lists every week with findings, so more than one line starts like this
     await expect(
-      page.getByText(/^Week starting \d{4}-\d{2}-\d{2} \(/),
+      page.getByText(/^Week starting \d{4}-\d{2}-\d{2} \(/).first(),
     ).toBeVisible();
     await expect(page.getByText(/^No findings for the week/)).toHaveCount(0);
   });
