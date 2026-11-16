@@ -1,4 +1,4 @@
-import { mayOpen, type Rights } from "@/server/nav";
+import { can, mayOpen, type Rights } from "@/server/nav";
 
 /** What a notice opens, as the backend sends it (`target`). */
 export type NoticeLink = { kind: string; id?: string | null };
@@ -38,6 +38,14 @@ export function noticeHref(
       return mayOpen(me, "changes") ? "/changes" : null;
     case "shift":
       return mayOpen(me, "shifts") ? "/shifts" : null;
+    case "announcement":
+      // staff read it from "Announcements"; a sender (who may not work shifts) has the same address
+      return id &&
+        (mayOpen(me, "announcements") || can(me, "announcements.send"))
+        ? `/announcements/${id}`
+        : null;
+    case "cash_payment":
+      return mayOpen(me, "my-cash") ? "/my-cash" : null;
     default:
       return null;
   }

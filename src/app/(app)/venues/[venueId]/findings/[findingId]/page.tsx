@@ -11,7 +11,7 @@ import { requirePrincipal } from "@/server/auth/principal";
 import { fetchFinding, fetchSources } from "@/server/data/insights";
 import { formatMoney } from "@/server/format";
 import { rowCells } from "../../pnl/sources/columns";
-import { factLines, groupWords } from "./rows";
+import { factLines, groupWords, NO_CAUSE, whyLines } from "./rows";
 
 export const metadata = { title: "Finding" };
 
@@ -41,6 +41,7 @@ export default async function FindingPage({
     ? await fetchSources(token, venueId, findingId, group, offset, here)
     : null;
   const facts = factLines(finding.facts);
+  const why = whyLines(finding.kind, finding.causes, finding.facts);
   const link = (g: string, to: number) => `${here}?group=${g}&offset=${to}`;
 
   return (
@@ -72,6 +73,25 @@ export default async function FindingPage({
           ) : null}
         </VStack>
       </Card>
+
+      {why && (why.causes.length > 0 || why.overTarget) ? (
+        <>
+          <Heading level={2}>Why</Heading>
+          {why.causes.length === 0 ? (
+            <Text type="body">{NO_CAUSE}</Text>
+          ) : (
+            <Card padding={4}>
+              <VStack gap={2} hAlign="stretch">
+                {why.causes.map((c) => (
+                  <Text key={`${c.kind}|${c.text}`} type="body">
+                    {c.text} ({formatMoney(c.cents)})
+                  </Text>
+                ))}
+              </VStack>
+            </Card>
+          )}
+        </>
+      ) : null}
 
       <Heading level={2}>How it was worked out</Heading>
       {facts.length === 0 ? (

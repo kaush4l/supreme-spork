@@ -34,6 +34,8 @@ describe("navigation by role and rights", () => {
       "requests",
       "pay",
       "notices",
+      "announcements",
+      "my-cash",
       "waste",
       "docket-send",
     ]);
@@ -102,6 +104,7 @@ describe("navigation by role and rights", () => {
       "pnl",
       "bills",
       "bank",
+      "cash-book",
       "downloads",
     ]);
     expect(mayOpen(manager, "pnl")).toBe(false);

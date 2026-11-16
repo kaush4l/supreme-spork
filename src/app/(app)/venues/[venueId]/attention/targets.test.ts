@@ -46,6 +46,10 @@ describe("attention targets", () => {
     expect(targetPage("corrective_action")?.nav).toBe("actions");
     expect(targetPage("dockets_queue", null)?.path).toBe("/dockets");
     expect(targetPage("bank_files_review")?.path).toBe("/bank/files");
+    expect(targetPage("cash_unconfirmed")?.path).toBe(
+      "/cash-book?unconfirmed=true",
+    );
+    expect(targetPage("cash_unconfirmed")?.nav).toBe("cash-book");
   });
   test("an unknown or missing kind has no page", () => {
     expect(targetPage("zzz")).toBeNull();

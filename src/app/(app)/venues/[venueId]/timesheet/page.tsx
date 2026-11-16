@@ -57,6 +57,9 @@ export default async function TimesheetPage({
       >
         Download as a spreadsheet (CSV)
       </Link>
+      <Link href={`/venues/${venueId}/timesheet/check`}>
+        Check hours before a pay run
+      </Link>
       {sheet.people.length === 0 ? (
         <Text type="supporting" color="secondary">
           Nobody clocked in between {from} and {to}.

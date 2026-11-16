@@ -20,9 +20,18 @@ export const findingSchema = z.object({
 });
 export type Finding = z.infer<typeof findingSchema>;
 
+/** One reason a labour finding is over target (N24), largest first. */
+export const causeSchema = z.object({
+  kind: z.string(),
+  cents: z.number(),
+  text: z.string(),
+});
+export type Cause = z.infer<typeof causeSchema>;
+
 export const findingDetailSchema = findingSchema.extend({
   current: z.boolean(),
   facts: z.unknown().nullish(),
+  causes: z.array(causeSchema).default([]),
 });
 
 const pageOf = <T extends z.ZodType>(item: T) =>

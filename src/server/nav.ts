@@ -57,6 +57,12 @@ export function navFor(me: Rights): NavSection[] {
         { key: "requests", label: "Requests", path: "/requests" },
         { key: "pay", label: "My hours", path: "/pay" },
         { key: "notices", label: "Notices", path: "/notices" },
+        {
+          key: "announcements",
+          label: "Announcements",
+          path: "/announcements",
+        },
+        { key: "my-cash", label: "My cash", path: "/my-cash" },
         { key: "waste", label: "Waste", path: "/waste" },
         // Managers send dockets from the Dockets page; staff get their own link.
         ...(isManager(me)
@@ -101,12 +107,24 @@ export function navFor(me: Rights): NavSection[] {
   }
   if (can(me, "timesheet.view")) {
     manage.push({ key: "timesheet", label: "Timesheet", path: "/timesheet" });
+    manage.push({
+      key: "timesheet-check",
+      label: "Check hours",
+      path: "/timesheet/check",
+    });
   }
   if (can(me, "staff.manage") || can(me, "staff.invite")) {
     manage.push({ key: "team", label: "Team", path: "/team" });
   }
   if (isManager(me) && !isOwnerLike(me)) {
     manage.push({ key: "changes", label: "Change requests", path: "/changes" });
+  }
+  if (!worksShifts(me) && can(me, "announcements.send")) {
+    manage.push({
+      key: "announcements",
+      label: "Announcements",
+      path: "/announcements",
+    });
   }
   if (manage.length > 0)
     sections.push({ title: "Running the venue", items: manage });
@@ -139,6 +157,9 @@ export function navFor(me: Rights): NavSection[] {
       { key: "bills", label: "Bills", path: "/bills" },
       { key: "bank", label: "Bank questions", path: "/bank" },
     );
+  }
+  if (can(me, "cash.record") || can(me, "money.cash")) {
+    books.push({ key: "cash-book", label: "Cash book", path: "/cash-book" });
   }
   if (can(me, "money.exports")) {
     books.push({ key: "downloads", label: "Downloads", path: "/downloads" });

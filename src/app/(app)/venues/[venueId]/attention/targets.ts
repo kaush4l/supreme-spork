@@ -35,6 +35,11 @@ const PAGES: Record<string, (id: string | null) => TargetPage> = {
     path: id ? `/actions/${id}` : "/actions",
     nav: "actions",
   }),
+  // Wages the person paid has not confirmed.
+  cash_unconfirmed: () => ({
+    path: "/cash-book?unconfirmed=true",
+    nav: "cash-book",
+  }),
 };
 
 /** Every target kind this mapping covers. */

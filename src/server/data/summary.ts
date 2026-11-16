@@ -31,6 +31,15 @@ export const summarySchema = z.object({
     target_pct: z.string().nullable(),
     vs_target: z.string(),
     pct_note: z.string().nullish(),
+    /** N24: the largest reason the week is over its labour target, or null. */
+    top_cause: z
+      .object({
+        kind: z.string(),
+        cents: z.number(),
+        text: z.string(),
+        week_start: z.string(),
+      })
+      .nullish(),
   }),
   prime_cost: z.object({
     prime_cents: z.number().nullable(),

@@ -72,6 +72,11 @@ export function SummaryCard({
                 : `${labour.labour_pct}% of sales (target ${labour.target_pct}%, ${targetWords(labour.vs_target)})`
             }
           />
+          {labour.top_cause ? (
+            <Text type="supporting" color="secondary">
+              Main reason: {labour.top_cause.text}
+            </Text>
+          ) : null}
           {labour.labour_pct === null && labour.pct_note ? (
             <Text type="supporting" color="secondary">
               {labour.pct_note}

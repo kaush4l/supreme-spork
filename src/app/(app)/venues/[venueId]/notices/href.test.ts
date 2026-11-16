@@ -63,6 +63,24 @@ describe("noticeHref", () => {
     expect(noticeHref({ kind: "shift", id: "s1" }, staff)).toBe("/shifts");
     expect(noticeHref({ kind: "shift", id: "s1" }, owner)).toBeNull();
   });
+  test("an announcement opens at its own address for staff and for who sends", () => {
+    const t = { kind: "announcement", id: "a1" };
+    expect(noticeHref(t, staff)).toBe("/announcements/a1");
+    expect(
+      noticeHref(t, {
+        ...owner,
+        rights: [...owner.rights, "announcements.send"],
+      }),
+    ).toBe("/announcements/a1");
+    expect(noticeHref(t, manager)).toBe("/announcements/a1");
+    expect(noticeHref(t, bookkeeper)).toBeNull();
+    expect(noticeHref({ kind: "announcement", id: null }, staff)).toBeNull();
+  });
+  test("a cash payment goes to my cash for people who work shifts", () => {
+    const t = { kind: "cash_payment", id: "p1" };
+    expect(noticeHref(t, staff)).toBe("/my-cash");
+    expect(noticeHref(t, bookkeeper)).toBeNull();
+  });
   test("none, unknown and missing targets have no link", () => {
     expect(noticeHref({ kind: "none", id: null }, staff)).toBeNull();
     expect(noticeHref({ kind: "zzz", id: "x" }, staff)).toBeNull();

@@ -330,6 +330,96 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/announcements": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Announcements
+     * @description Newest first. `status` all (default), active, withdrawn or expired (422 `bad_status`). Each item has the counts for
+     *     "read by 8 of 11" (`read_count`, `told_count`, `unread_count`, `no_login_count`) and `can_remind`.
+     */
+    get: operations["list_announcements_v1_venues__venue_id__announcements_get"];
+    put?: never;
+    /**
+     * Send Announcement
+     * @description Send to everyone, some positions, some groups or named people (active staff only). Each person with an app login gets one
+     *     notice; people without a login are counted as `no_login`, not as not read. 422: `title_needed`, `body_needed`,
+     *     `bad_audience_kind`, `audience_needed`, `audience_ids_not_allowed`, `unknown_position`, `unknown_group`, `unknown_person`,
+     *     `person_not_active`, `no_recipients`, `bad_expires_at` (give a time zone), `expires_in_past`.
+     */
+    post: operations["send_announcement_v1_venues__venue_id__announcements_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/announcements/{announcement_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Announcement
+     * @description The announcement with its receipts: `people` (everyone it was meant for: `state` read, unread or no_login, `told_at`,
+     *     `read_at`) and `reminders`. 404 `announcement_not_found`.
+     */
+    get: operations["get_announcement_v1_venues__venue_id__announcements__announcement_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/announcements/{announcement_id}/remind": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Remind Announcement
+     * @description Tell again only the people with a login who have not read it; `reminded` is how many. At most once a day: 409
+     *     `remind_too_soon`. 409 `announcement_withdrawn`, `announcement_expired`, `nobody_to_remind`.
+     */
+    post: operations["remind_announcement_v1_venues__venue_id__announcements__announcement_id__remind_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/announcements/{announcement_id}/withdraw": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Withdraw Announcement
+     * @description Withdraw it: staff see it as withdrawn (no text) and its notices stop being live. Withdrawing again changes nothing.
+     */
+    post: operations["withdraw_announcement_v1_venues__venue_id__announcements__announcement_id__withdraw_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/attention": {
     parameters: {
       query?: never;
@@ -713,6 +803,135 @@ export interface paths {
      *     naming a marked date.
      */
     post: operations["bill_mark_v1_venues__venue_id__bills__bill_id__occurrences__due_on__mark_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/cash-book/export.csv": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Cash Export
+     * @description The cash wage payments paid from..to, one line each (cancelled ones left out), for the bookkeeper.
+     */
+    get: operations["cash_export_v1_venues__venue_id__cash_book_export_csv_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/cash-book/payments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Payments
+     * @description Cash payments, newest first. Filters: `kind`, `person` (a staff_ref), `supplier` (a supplier id), `from` and `to` (paid on),
+     *     `unconfirmed=true` (wages nobody has confirmed, not cancelled). Cancelled payments are listed with `status` cancelled.
+     */
+    get: operations["list_payments_v1_venues__venue_id__cash_book_payments_get"];
+    put?: never;
+    /**
+     * Record Payment
+     * @description Record cash paid out. `wages` needs `payee_staff_ref` (the person is sent a notice to confirm it), `supplier` needs
+     *     `supplier_id` (and may name a `bill_id`: that bill's due date is marked paid in cash in the same request), `petty` needs a
+     *     `note`. The amount is in cents and more than zero. Send an `Idempotency-Key` so a retry is one payment.
+     */
+    post: operations["record_payment_v1_venues__venue_id__cash_book_payments_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/cash-book/payments/{payment_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get Payment */
+    get: operations["get_payment_v1_venues__venue_id__cash_book_payments__payment_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/cash-book/payments/{payment_id}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Cancel Payment
+     * @description Cancel a payment (a reason is required). It stays in the list as cancelled. A supplier payment that settled a bill does
+     *     NOT reopen the bill: the answer says so (`bill_note`) and the owner reopens it in Bills.
+     */
+    post: operations["cancel_payment_v1_venues__venue_id__cash_book_payments__payment_id__cancel_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/cash-book/summary": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Cash Summary
+     * @description Paid out by kind, the wages nobody confirmed (count and total), and per person the timesheet hours, their pay rate, the
+     *     cost of those hours, the cash wages paid and `difference_cents` (cash paid minus cost).
+     */
+    get: operations["cash_summary_v1_venues__venue_id__cash_book_summary_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/cash-book/till-counts": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List Till Counts */
+    get: operations["list_till_counts_v1_venues__venue_id__cash_book_till_counts_get"];
+    put?: never;
+    /**
+     * Record Till Count
+     * @description Count the till for a trading day. Counting again replaces the day's count (the old one stays on record). The answer works
+     *     out `expected_cents` (float + POS cash sales - cash paid out that day) and the `gap_cents`; when the sales data has no cash
+     *     tender both are null and `flag` is `not_checked`: the count is still stored.
+     */
+    post: operations["record_till_count_v1_venues__venue_id__cash_book_till_counts_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1563,6 +1782,47 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/me/announcements": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Announcements
+     * @description The announcements the signed-in person was told, newest first, with `read` and `read_at`; `unread` counts the active ones
+     *     not read. A withdrawn one has `status` withdrawn and no `body`.
+     */
+    get: operations["my_announcements_v1_venues__venue_id__me_announcements_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/announcements/{announcement_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Announcement
+     * @description Open one: it is marked read (unless withdrawn). 404 `announcement_not_found` for one the person was not told.
+     */
+    get: operations["my_announcement_v1_venues__venue_id__me_announcements__announcement_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/me/blackouts": {
     parameters: {
       query?: never;
@@ -1577,6 +1837,47 @@ export interface paths {
     get: operations["my_blackouts_v1_venues__venue_id__me_blackouts_get"];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/cash-payments": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * My Cash Payments
+     * @description The caller's own cash payments, newest first (wages only: staff see nothing of suppliers or petty cash).
+     */
+    get: operations["my_cash_payments_v1_venues__venue_id__me_cash_payments_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/me/cash-payments/{payment_id}/confirm": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Confirm My Payment
+     * @description Say you received this cash. Only the person paid can; once (a second confirm is 409 `already_confirmed`). Someone
+     *     else's payment, or one that does not exist, is 404; a cancelled one is 409 `payment_cancelled`.
+     */
+    post: operations["confirm_my_payment_v1_venues__venue_id__me_cash_payments__payment_id__confirm_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -3845,6 +4146,72 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/venues/{venue_id}/timesheet/exceptions": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Timesheet Exceptions
+     * @description Rostered shifts and clock sessions in the range that need a look before a pay run (no_show, missing_out, late_in, early_out,
+     *     over_plan, unrostered, long_session, no_rate), with per person planned and actual minutes, counts of the open ones per kind and
+     *     `ready` (true when none is open). Each exception has a `key`, the ids the correction routes need and `dismissed`. At most 92 days.
+     */
+    get: operations["timesheet_exceptions_v1_venues__venue_id__timesheet_exceptions_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/timesheet/exceptions/dismiss": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Dismiss Exception
+     * @description Set an exception aside with a reason so it stops counting. Setting the same one aside again answers with the first.
+     */
+    post: operations["dismiss_exception_v1_venues__venue_id__timesheet_exceptions_dismiss_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/venues/{venue_id}/timesheet/reviews": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Period Reviews
+     * @description The history of checks, newest first.
+     */
+    get: operations["list_period_reviews_v1_venues__venue_id__timesheet_reviews_get"];
+    put?: never;
+    /**
+     * Sign Off Period
+     * @description Record that the period was checked, with how many exceptions were still open at that moment.
+     */
+    post: operations["sign_off_period_v1_venues__venue_id__timesheet_reviews_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/venues/{venue_id}/waste": {
     parameters: {
       query?: never;
@@ -4606,6 +4973,25 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /**
+     * AnnouncementIn
+     * @description `audience_kind` everyone (no ids), positions (position names), groups (staff group ids) or people (staff profile ids).
+     */
+    AnnouncementIn: {
+      /** Audience Ids */
+      audience_ids?: string[];
+      /**
+       * Audience Kind
+       * @default everyone
+       */
+      audience_kind: string;
+      /** Body */
+      body: string;
+      /** Expires At */
+      expires_at?: string | null;
+      /** Title */
+      title: string;
+    };
+    /**
      * ApprovalChange
      * @description Who approves one right: off (act directly), owner, or partner (the partner or the owner).
      */
@@ -4813,6 +5199,37 @@ export interface components {
     Body_waste_photo_v1_venues__venue_id__waste_photo_post: {
       /** File */
       file: string;
+    };
+    /** CashPaymentCancel */
+    CashPaymentCancel: {
+      /** Reason */
+      reason: string;
+    };
+    /** CashPaymentRecord */
+    CashPaymentRecord: {
+      /** Amount Cents */
+      amount_cents: number;
+      /** Bill Due On */
+      bill_due_on?: string | null;
+      /** Bill Id */
+      bill_id?: string | null;
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: "wages" | "supplier" | "petty";
+      /** Note */
+      note?: string | null;
+      /** Paid On */
+      paid_on?: string | null;
+      /** Pay Period From */
+      pay_period_from?: string | null;
+      /** Pay Period To */
+      pay_period_to?: string | null;
+      /** Payee Staff Ref */
+      payee_staff_ref?: string | null;
+      /** Supplier Id */
+      supplier_id?: string | null;
     };
     /** CategoryChange */
     CategoryChange: {
@@ -5759,6 +6176,51 @@ export interface components {
       /** Name */
       name: string;
     };
+    /** TillCountRecord */
+    TillCountRecord: {
+      /** Counted Cents */
+      counted_cents: number;
+      /**
+       * Float Cents
+       * @default 0
+       */
+      float_cents: number;
+      /** Note */
+      note?: string | null;
+      /** Trading Day */
+      trading_day?: string | null;
+    };
+    /**
+     * TimesheetDismissIn
+     * @description Set one exception aside: its `key` from the exceptions list and a reason.
+     */
+    TimesheetDismissIn: {
+      /** Key */
+      key: string;
+      /** Reason */
+      reason: string;
+    };
+    /**
+     * TimesheetReviewIn
+     * @description Mark the trading days `from`..`to` as checked. `note` is optional.
+     */
+    TimesheetReviewIn: {
+      /**
+       * From
+       * Format: date
+       */
+      from: string;
+      /**
+       * Note
+       * @default
+       */
+      note: string;
+      /**
+       * To
+       * Format: date
+       */
+      to: string;
+    };
     /** ValidationError */
     ValidationError: {
       /** Context */
@@ -6528,6 +6990,200 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_announcements_v1_venues__venue_id__announcements_get: {
+    parameters: {
+      query?: {
+        status?: string;
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  send_announcement_v1_venues__venue_id__announcements_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["AnnouncementIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_announcement_v1_venues__venue_id__announcements__announcement_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        announcement_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  remind_announcement_v1_venues__venue_id__announcements__announcement_id__remind_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        announcement_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  withdraw_announcement_v1_venues__venue_id__announcements__announcement_id__withdraw_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        announcement_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
         headers: {
           [name: string]: unknown;
         };
@@ -7330,6 +7986,329 @@ export interface operations {
     responses: {
       /** @description Successful Response */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cash_export_v1_venues__venue_id__cash_book_export_csv_get: {
+    parameters: {
+      query: {
+        to: string;
+        from: string;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_payments_v1_venues__venue_id__cash_book_payments_get: {
+    parameters: {
+      query?: {
+        kind?: ("wages" | "supplier" | "petty") | null;
+        person?: string | null;
+        supplier?: string | null;
+        from?: string | null;
+        to?: string | null;
+        unconfirmed?: boolean;
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  record_payment_v1_venues__venue_id__cash_book_payments_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CashPaymentRecord"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_payment_v1_venues__venue_id__cash_book_payments__payment_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        payment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cancel_payment_v1_venues__venue_id__cash_book_payments__payment_id__cancel_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        payment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CashPaymentCancel"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cash_summary_v1_venues__venue_id__cash_book_summary_get: {
+    parameters: {
+      query: {
+        to: string;
+        from: string;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_till_counts_v1_venues__venue_id__cash_book_till_counts_get: {
+    parameters: {
+      query?: {
+        from?: string | null;
+        to?: string | null;
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  record_till_count_v1_venues__venue_id__cash_book_till_counts_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TillCountRecord"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
         headers: {
           [name: string]: unknown;
         };
@@ -9237,6 +10216,82 @@ export interface operations {
       };
     };
   };
+  my_announcements_v1_venues__venue_id__me_announcements_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_announcement_v1_venues__venue_id__me_announcements__announcement_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        announcement_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   my_blackouts_v1_venues__venue_id__me_blackouts_get: {
     parameters: {
       query?: never;
@@ -9260,6 +10315,83 @@ export interface operations {
           "application/json": {
             [key: string]: unknown;
           }[];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  my_cash_payments_v1_venues__venue_id__me_cash_payments_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  confirm_my_payment_v1_venues__venue_id__me_cash_payments__payment_id__confirm_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+        payment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
         };
       };
       /** @description Validation Error */
@@ -14193,6 +15325,166 @@ export interface operations {
         };
         content: {
           "application/json": unknown;
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  timesheet_exceptions_v1_venues__venue_id__timesheet_exceptions_get: {
+    parameters: {
+      query: {
+        to: string;
+        from: string;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  dismiss_exception_v1_venues__venue_id__timesheet_exceptions_dismiss_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TimesheetDismissIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_period_reviews_v1_venues__venue_id__timesheet_reviews_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+        offset?: number;
+      };
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  sign_off_period_v1_venues__venue_id__timesheet_reviews_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+        "x-api-key"?: string | null;
+        "idempotency-key"?: string | null;
+      };
+      path: {
+        venue_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["TimesheetReviewIn"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": {
+            [key: string]: unknown;
+          };
         };
       };
       /** @description Validation Error */

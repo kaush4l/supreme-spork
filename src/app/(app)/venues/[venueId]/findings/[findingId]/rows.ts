@@ -12,6 +12,7 @@ const HIDDEN = new Set([
   "message_id",
   "narration_model",
   "narration_prompt_version",
+  "causes", // shown as the "Why" list
 ]);
 
 export type Line = { label: string; value: string };
@@ -86,4 +87,23 @@ export const GROUP_WORDS: Record<string, string> = {
 
 export function groupWords(group: string): string {
   return GROUP_WORDS[group] ?? humanLabel(group);
+}
+
+export const NO_CAUSE = "No single cause stands out.";
+
+/**
+ * The "Why" list of a labour finding (N24), as the API sent it. Null for any other kind of finding.
+ * `over` is the API's own over-target amount in the facts; the list is shown, or the plain line when over target with no cause.
+ */
+export function whyLines(
+  kind: string,
+  causes: { kind: string; cents: number; text: string }[],
+  facts: unknown,
+): { causes: typeof causes; overTarget: boolean } | null {
+  if (kind !== "labour_pct") return null;
+  const over =
+    facts && typeof facts === "object"
+      ? (facts as Record<string, unknown>).over_target_cents
+      : null;
+  return { causes, overTarget: typeof over === "number" && over > 0 };
 }

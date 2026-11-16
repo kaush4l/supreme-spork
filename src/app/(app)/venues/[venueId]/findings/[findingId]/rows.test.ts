@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { factLines, groupWords, humanLabel, showValue } from "./rows";
+import { factLines, groupWords, humanLabel, showValue, whyLines } from "./rows";
 
 describe("rows", () => {
   test("labels", () => {
@@ -27,5 +27,17 @@ describe("rows", () => {
   test("group words", () => {
     expect(groupWords("transactions")).toBe("Bank rows");
     expect(groupWords("odd_group")).toBe("Odd group");
+  });
+  test("why list only for labour findings", () => {
+    const c = [{ kind: "low_sales", cents: 5000, text: "Sales were low." }];
+    expect(whyLines("waste", c, { over_target_cents: 9 })).toBeNull();
+    expect(whyLines("labour_pct", c, { over_target_cents: 9000 })).toEqual({
+      causes: c,
+      overTarget: true,
+    });
+    expect(
+      whyLines("labour_pct", [], { over_target_cents: 0 })?.overTarget,
+    ).toBe(false);
+    expect(whyLines("labour_pct", [], null)?.overTarget).toBe(false);
   });
 });
