@@ -8,6 +8,13 @@ import { buildCsp, newNonce } from "@/server/csp";
  * itself, because a matcher can skip a path and the framework has had proxy-bypass advisories.
  */
 export async function proxy(request: NextRequest) {
+  // Prototype routes (see src/proto/guard.ts): disabled answers 404 here, before any auth work. Enabled routes are
+  // synthetic, so they skip the session refresh and make no call to the login service. Real routes are untouched.
+  const path = request.nextUrl.pathname;
+  const isProto = path === "/proto" || path.startsWith("/proto/");
+  if (isProto && process.env.PROTO_ENABLED !== "1") {
+    return new NextResponse("Not found", { status: 404 });
+  }
   const nonce = newNonce();
   const csp = buildCsp(nonce, {
     dev: process.env.NODE_ENV === "development",
@@ -30,7 +37,7 @@ export async function proxy(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("Content-Security-Policy", csp);
-  await refreshSession(request, response);
+  if (!isProto) await refreshSession(request, response);
   return response;
 }
 
